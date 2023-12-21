@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Department
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'Auto')]
+    #[ORM\GeneratedValue(strategy: 'NONE')]
     #[ORM\Column(name:'dept_no')]
     private ?string $id = null;
 
@@ -30,6 +30,13 @@ class Department
     public function getId(): ?string
     {
         return $this->id;
+    }
+
+    public function setId(string $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getDescription(): ?string

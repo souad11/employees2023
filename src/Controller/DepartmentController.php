@@ -29,6 +29,24 @@ class DepartmentController extends AbstractController
         $form = $this->createForm(DepartmentType::class, $department);
         $form->handleRequest($request);
 
+        $conn = $entityManager->getConnection();
+        $sql = 'SELECT dept_no FROM departments ORDER BY dept_no DESC LIMIT 1';
+
+        $stmt = $conn->executeQuery($sql);
+        $lastDepartmentId = $stmt->fetchOne();
+
+        // Extraire les chiffres après le "d"
+        $lastNumber = substr($lastDepartmentId, 1);
+
+        // Incrémenter le nombre
+        $newNumber = $lastNumber + 1;
+
+        // Reformater l'identifiant avec le nouveau nombre
+        $newDepartmentId = 'd' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+
+        $department->setId($newDepartmentId);
+
+
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($department);
             $entityManager->flush();
