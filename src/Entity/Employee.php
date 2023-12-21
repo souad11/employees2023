@@ -63,6 +63,13 @@ class Employee
         return $this->id;
     }
 
+    public function setId(?int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getBirthDate(): ?\DateTimeInterface
     {
         return $this->birthDate;
