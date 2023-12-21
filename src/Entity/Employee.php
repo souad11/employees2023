@@ -20,8 +20,9 @@ enum Gender: string {
 class Employee
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'NONE')]
     #[ORM\Column(name: 'emp_no')]
+
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
