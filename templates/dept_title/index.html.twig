@@ -3,19 +3,22 @@
 {% block title %}DeptTitle index{% endblock %}
 
 {% block body %}
-    <h1>DeptTitle index</h1>
+    <h1>Postes Vacants</h1>
 
     <table class="table">
         <thead>
             <tr>
                 <th>Id</th>
-                <th>actions</th>
+                <th>Departement</th>
+                <th>Fonctions</th>
             </tr>
         </thead>
         <tbody>
         {% for dept_title in dept_titles %}
             <tr>
                 <td>{{ dept_title.id }}</td>
+                <td>{{ dept_title.department.deptName }}</td>
+                <td>{{ dept_title.title.title }}</td>
                 <td>
                     <a href="{{ path('app_dept_title_show', {'id': dept_title.id}) }}">show</a>
                     <a href="{{ path('app_dept_title_edit', {'id': dept_title.id}) }}">edit</a>

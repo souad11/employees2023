@@ -17,11 +17,11 @@ class DeptTitleType extends AbstractType
         $builder
             ->add('department', EntityType::class, [
                 'class' => Department::class,
-'choice_label' => 'id',
+'choice_label' => 'dept_name',
             ])
             ->add('title', EntityType::class, [
                 'class' => Title::class,
-'choice_label' => 'id',
+'choice_label' => 'title',
             ])
         ;
     }
