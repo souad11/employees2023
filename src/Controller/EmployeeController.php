@@ -36,6 +36,8 @@ class EmployeeController extends AbstractController
             return $this->redirectToRoute('app_employee_index', [], Response::HTTP_SEE_OTHER);
         }
 
+        
+
         return $this->render('employee/new.html.twig', [
             'employee' => $employee,
             'form' => $form,
