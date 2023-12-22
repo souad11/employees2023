@@ -15,7 +15,6 @@ class EmployeeType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('id', HiddenType::class)
             ->add('birthDate')
             ->add('firstName')
             ->add('lastName')
