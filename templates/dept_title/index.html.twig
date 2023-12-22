@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}DeptTitle index{% endblock %}
+
+{% block body %}
+    <h1>DeptTitle index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for dept_title in dept_titles %}
+            <tr>
+                <td>{{ dept_title.id }}</td>
+                <td>
+                    <a href="{{ path('app_dept_title_show', {'id': dept_title.id}) }}">show</a>
+                    <a href="{{ path('app_dept_title_edit', {'id': dept_title.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_dept_title_new') }}">Create new</a>
+{% endblock %}
