@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\DepartmentRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -26,6 +29,15 @@ class Department
 
     #[ORM\Column(length: 40)]
     private ?string $deptName = null;
+
+    #[ORM\OneToMany(mappedBy: 'department', targetEntity: DeptTitle::class)]
+    private Collection $deptTitles;
+
+    public function __construct()
+    {
+        $this->deptTitles = new ArrayCollection();
+    }
+
 
     public function getId(): ?string
     {
@@ -86,4 +98,36 @@ class Department
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, DeptTitle>
+     */
+    public function getDeptTitles(): Collection
+    {
+        return $this->deptTitles;
+    }
+
+    public function addDeptTitle(DeptTitle $deptTitle): static
+    {
+        if (!$this->deptTitles->contains($deptTitle)) {
+            $this->deptTitles->add($deptTitle);
+            $deptTitle->setDepartment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDeptTitle(DeptTitle $deptTitle): static
+    {
+        if ($this->deptTitles->removeElement($deptTitle)) {
+            // set the owning side to null (unless already changed)
+            if ($deptTitle->getDepartment() === $this) {
+                $deptTitle->setDepartment(null);
+            }
+        }
+
+        return $this;
+    }
+
+    
 }
