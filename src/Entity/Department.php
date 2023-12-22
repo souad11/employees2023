@@ -33,13 +33,9 @@ class Department
     #[ORM\OneToMany(mappedBy: 'department', targetEntity: DeptTitle::class)]
     private Collection $deptTitles;
 
-    #[ORM\OneToMany(mappedBy: 'department', targetEntity: DeptEmp::class)]
-    private Collection $y;
-
     public function __construct()
     {
         $this->deptTitles = new ArrayCollection();
-        $this->y = new ArrayCollection();
     }
 
 
@@ -127,36 +123,6 @@ class Department
             // set the owning side to null (unless already changed)
             if ($deptTitle->getDepartment() === $this) {
                 $deptTitle->setDepartment(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, DeptEmp>
-     */
-    public function getY(): Collection
-    {
-        return $this->y;
-    }
-
-    public function addY(DeptEmp $y): static
-    {
-        if (!$this->y->contains($y)) {
-            $this->y->add($y);
-            $y->setDepartment($this);
-        }
-
-        return $this;
-    }
-
-    public function removeY(DeptEmp $y): static
-    {
-        if ($this->y->removeElement($y)) {
-            // set the owning side to null (unless already changed)
-            if ($y->getDepartment() === $this) {
-                $y->setDepartment(null);
             }
         }
 
