@@ -54,9 +54,13 @@ class Employee
     #[ORM\OneToMany(mappedBy: 'employe', targetEntity: Demand::class)]
     private Collection $demands;
 
+    #[ORM\OneToMany(mappedBy: 'employee', targetEntity: DeptEmp::class)]
+    private Collection $y;
+
     public function __construct()
     {
         $this->demands = new ArrayCollection();
+        $this->y = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -184,6 +188,36 @@ class Employee
             // set the owning side to null (unless already changed)
             if ($demand->getEmploye() === $this) {
                 $demand->setEmploye(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DeptEmp>
+     */
+    public function getY(): Collection
+    {
+        return $this->y;
+    }
+
+    public function addY(DeptEmp $y): static
+    {
+        if (!$this->y->contains($y)) {
+            $this->y->add($y);
+            $y->setEmployee($this);
+        }
+
+        return $this;
+    }
+
+    public function removeY(DeptEmp $y): static
+    {
+        if ($this->y->removeElement($y)) {
+            // set the owning side to null (unless already changed)
+            if ($y->getEmployee() === $this) {
+                $y->setEmployee(null);
             }
         }
 
