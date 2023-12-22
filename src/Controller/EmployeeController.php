@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+
 #[Route('/employee')]
 class EmployeeController extends AbstractController
 {
@@ -27,11 +28,27 @@ class EmployeeController extends AbstractController
     {
         $employee = new Employee();
         $form = $this->createForm(EmployeeType::class, $employee);
+       
         $form->handleRequest($request);
 
+        $conn = $entityManager->getConnection();
+        $sql = 'SELECT emp_no FROM employees ORDER BY emp_no DESC LIMIT 1';
+        $stmt = $conn->executeQuery($sql);
+        $lastEmployeeId = $stmt->fetchOne();
+        var_dump($lastEmployeeId);
+        $employee->setId($lastEmployeeId + 1);;
+        var_dump($employee->getId());die;
+        
+        
+        
+
         if ($form->isSubmitted() && $form->isValid()) {
+            
             $entityManager->persist($employee);
+            
+
             $entityManager->flush();
+            
 
             return $this->redirectToRoute('app_employee_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -63,6 +80,8 @@ class EmployeeController extends AbstractController
 
             return $this->redirectToRoute('app_employee_index', [], Response::HTTP_SEE_OTHER);
         }
+
+        
 
         return $this->render('employee/edit.html.twig', [
             'employee' => $employee,
