@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit DeptTitle{% endblock %}
+
+{% block body %}
+    <h1>Edit DeptTitle</h1>
+
+    {{ include('dept_title/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_dept_title_index') }}">back to list</a>
+
+    {{ include('dept_title/_delete_form.html.twig') }}
+{% endblock %}

@@ -8,12 +8,14 @@ use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Entity\Gender;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class EmployeeType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('id', HiddenType::class)
             ->add('birthDate')
             ->add('firstName')
             ->add('lastName')

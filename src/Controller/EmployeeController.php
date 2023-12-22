@@ -35,9 +35,9 @@ class EmployeeController extends AbstractController
         $sql = 'SELECT emp_no FROM employees ORDER BY emp_no DESC LIMIT 1';
         $stmt = $conn->executeQuery($sql);
         $lastEmployeeId = $stmt->fetchOne();
-        var_dump($lastEmployeeId);
-        $employee->setId($lastEmployeeId + 1);;
-        var_dump($employee->getId());die;
+        // var_dump($lastEmployeeId);
+        $employee->setId($lastEmployeeId + 1);
+        // var_dump($employee->getId());die;
         
         
         
@@ -52,6 +52,8 @@ class EmployeeController extends AbstractController
 
             return $this->redirectToRoute('app_employee_index', [], Response::HTTP_SEE_OTHER);
         }
+
+        
 
         return $this->render('employee/new.html.twig', [
             'employee' => $employee,
