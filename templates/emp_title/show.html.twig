@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}EmpTitle{% endblock %}
+
+{% block body %}
+    <h1>EmpTitle</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ emp_title.id }}</td>
+            </tr>
+
+            <tr>
+                <th>Employee</th>
+                <td> {{ emp_title.employee.firstName }} {{ emp_title.employee.lastName }}</td>
+            </tr>
+
+            <tr>
+                <th>Title</th>
+                <td>{{ emp_title.title.title }}</td>
+            </tr>
+
+            <tr>
+                <th>FromDate</th>
+                <td>{{ emp_title.fromDate ? emp_title.fromDate|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>ToDate</th>
+                <td>{{ emp_title.toDate ? emp_title.toDate|date('Y-m-d') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_emp_title_index') }}">back to list</a>
+
+    <a href="{{ path('app_emp_title_edit', {'id': emp_title.id}) }}">edit</a>
+
+    {{ include('emp_title/_delete_form.html.twig') }}
+{% endblock %}

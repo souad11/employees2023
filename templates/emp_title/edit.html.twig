@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit EmpTitle{% endblock %}
+
+{% block body %}
+    <h1>Edit EmpTitle</h1>
+
+    {{ include('emp_title/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_emp_title_index') }}">back to list</a>
+
+    {{ include('emp_title/_delete_form.html.twig') }}
+{% endblock %}
