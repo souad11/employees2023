@@ -1,20 +1,40 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}{% endblock %}
 
 {% block body %}
 <style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
+<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <h1> {{ title }}! ✅</h1>
+    <h3>Qui sommes nous</h3>
+    <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
+    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+    nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse 
+    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia 
+    deserunt mollit anim id est laborum."</p>
 
-    This friendly message is coming from:
+    <h3>Communiqué de presse</h3>
     <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Users/Red/Desktop/employeesFinal/employees2023/src/Controller/HomeController.php'|file_link(0) }}">src/Controller/HomeController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Users/Red/Desktop/employeesFinal/employees2023/templates/home/index.html.twig'|file_link(0) }}">templates/home/index.html.twig</a></code></li>
+        {% for linkId, linkData in links %}
+            <li>
+                {{ linkData['id'] }} - <a href="{{ linkData['url'] }}" target="_blank">{{ linkData['url'] }}</a>
+                <a href="{{ path('download_pdf', {'linkId': linkId}) }}" target="_blank">Télécharger en PDF</a>
+            </li>
+        {% endfor %}
     </ul>
+    <h3>Documents</h3>
+    <h3>QR Code pour le téléchargement de l'application</h3>
+    <div id="qrcode"></div>
+
+    <script>
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: "http://localhost:8080/",
+            width: 100,
+            height: 100
+        });
+    </script>
 </div>
 {% endblock %}
