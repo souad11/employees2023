@@ -19,9 +19,9 @@ class EmpTitleType extends AbstractType
             ->add('fromDate')
             //todate doit être a 01/01/9999
             ->add('toDate', DateType::class, [
-                'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd',
-                'data' => new \DateTime('9999-01-01'),
+                'widget' => 'single_text', //pour avoir un seul champ de saisie
+                'format' => 'yyyy-MM-dd', //pour avoir le format attendu par MySQL
+                'data' => new \DateTime('9999-01-01'), //pour avoir une date par défaut
             ])
 
             ->add('employee', EntityType::class, [

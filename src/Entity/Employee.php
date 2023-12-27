@@ -9,6 +9,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+
+
+
 enum Gender: string {
     case Homme='M';
     case Femme='F';
@@ -44,6 +47,7 @@ class Employee
     private ?\DateTimeInterface $hireDate = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+
     private ?string $photo = null;
 
 

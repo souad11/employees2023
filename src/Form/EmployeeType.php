@@ -8,7 +8,8 @@ use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Entity\Gender;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 class EmployeeType extends AbstractType
 {
@@ -20,7 +21,20 @@ class EmployeeType extends AbstractType
             ->add('lastName')
             ->add('gender', EnumType::class, ['class' => Gender::class])
             ->add('hireDate')
-            ->add('photo')
+            ->add('photo', FileType::class, [
+                'label' => 'Photo (JPG file)',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k', //1Mo
+                        'mimeTypes' => [
+                            'image/jpeg',
+                        ],
+                        'mimeTypesMessage' => 'Please upload a valid JPG document',
+                    ])
+                ],
+            ])
             ->add('email')
         ;
     }

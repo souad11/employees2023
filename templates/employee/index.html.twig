@@ -28,7 +28,12 @@
                 <td>{{ employee.lastName }}</td>
                 <td>{{ employee.gender.value}}</td>
                 <td>{{ employee.hireDate ? employee.hireDate|date('Y-m-d') : '' }}</td>
-                <td>{{ employee.photo }}</td>
+                <td>{% if employee.getPhoto() %}
+                        <img src="{{ asset('uploads/photos/' ~ employee.getPhoto()) }}" alt="photo" width="100">
+                    {% else %}
+                        <p>Aucune photo disponible</p>
+                    {% endif %}
+                </td>
                 <td>{{ employee.email }}</td>
                 <td>
                     <a href="{{ path('app_employee_show', {'id': employee.id}) }}">show</a>
