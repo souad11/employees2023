@@ -51,4 +51,8 @@ class DeptTitle
         return $this;
     }
 
+    public function __toString()
+    {
+        return "{$this->department}";
+    }
 }
