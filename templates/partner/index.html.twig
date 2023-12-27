@@ -20,7 +20,7 @@
             <tr>
                 <td>{{ partner.id }}</td>
                 <td>{{ partner.title }}</td>
-                <td>{{ partner.url }}</td>
+                <td><a href="{{ partner.url }}" target="_blank">{{ partner.url }}</a></td>
                 <td>{{ partner.logo }}</td>
                 <td>
                     <a href="{{ path('app_partner_show', {'id': partner.id}) }}">show</a>
