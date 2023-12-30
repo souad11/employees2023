@@ -61,6 +61,9 @@ class Employee
     #[ORM\OneToMany(mappedBy: 'employee', targetEntity: EmpTitle::class)]
     private Collection $empTitles;
 
+    #[ORM\OneToOne(mappedBy: 'employee', cascade: ['persist', 'remove'])]
+    private ?DeptManager $deptManager = null;
+
     public function __construct()
     {
         $this->demands = new ArrayCollection();
@@ -224,6 +227,23 @@ class Employee
                 $empTitle->setEmployee(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDeptManager(): ?DeptManager
+    {
+        return $this->deptManager;
+    }
+
+    public function setDeptManager(DeptManager $deptManager): static
+    {
+        // set the owning side of the relation if necessary
+        if ($deptManager->getEmployee() !== $this) {
+            $deptManager->setEmployee($this);
+        }
+
+        $this->deptManager = $deptManager;
 
         return $this;
     }

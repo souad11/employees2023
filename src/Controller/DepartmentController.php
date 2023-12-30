@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Department;
+use App\Entity\DeptManager;
 use App\Form\DepartmentType;
 use App\Repository\DepartmentRepository;
+use App\Repository\DeptManagerRepository;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,10 +18,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class DepartmentController extends AbstractController
 {
     #[Route('/', name: 'app_department_index', methods: ['GET'])]
-    public function index(DepartmentRepository $departmentRepository): Response
+    public function index(DepartmentRepository $departmentRepository, DeptManagerRepository $deptManagerRepository,): Response
     {
+
         return $this->render('department/index.html.twig', [
             'departments' => $departmentRepository->findAll(),
+            'deptManagers' => $deptManagerRepository->findAll(),
+            
         ]);
     }
 
@@ -61,10 +67,11 @@ class DepartmentController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_department_show', methods: ['GET'])]
-    public function show(Department $department): Response
+    public function show(Department $department,DeptManagerRepository $deptManagerRepository): Response
     {
         return $this->render('department/show.html.twig', [
             'department' => $department,
+            'deptManager' => $deptManagerRepository->findOneBy(['departement' => $department]),
         ]);
     }
 

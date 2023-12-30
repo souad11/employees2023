@@ -33,6 +33,9 @@ class Department
     #[ORM\OneToMany(mappedBy: 'department', targetEntity: DeptTitle::class)]
     private Collection $deptTitles;
 
+    #[ORM\OneToOne(mappedBy: 'departement', cascade: ['persist', 'remove'])]
+    private ?DeptManager $deptManager = null;
+
     public function __construct()
     {
         $this->deptTitles = new ArrayCollection();
@@ -125,6 +128,23 @@ class Department
                 $deptTitle->setDepartment(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDeptManager(): ?DeptManager
+    {
+        return $this->deptManager;
+    }
+
+    public function setDeptManager(DeptManager $deptManager): static
+    {
+        // set the owning side of the relation if necessary
+        if ($deptManager->getDepartement() !== $this) {
+            $deptManager->setDepartement($this);
+        }
+
+        $this->deptManager = $deptManager;
 
         return $this;
     }
