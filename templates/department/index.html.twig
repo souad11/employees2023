@@ -14,6 +14,7 @@
                 <th>Roi</th>
                 <th>DeptName</th>
                 <th>ManagerPhoto</th>
+                <th>nombre d'employés</th>
                 <th>actions</th>
 
             </tr>
@@ -24,7 +25,9 @@
         {% for department in departments %}
             <tr>
                 <td>{{ department.id }}</td>
+                
                 <td>{{ department.description }}</td>
+
                 <td>{{ department.address }}</td>
                 <td>{{ department.roi }}</td>
                 <td>{{ department.deptName }}</td>
@@ -32,12 +35,16 @@
                 {% for deptManager in deptManagers %}
                    {%if deptManager.departement.id == department.id %}
                     <img src="{{ asset('uploads/photos/' ~ deptManager.employee.photo) }}" alt="photo" width="100" height="100">
-                    {% endif %}
+                {% endif %}
                 {% endfor %}
                 </td>
 
                 <td>
-
+                {% for nbEmployee in nbEmployees %}
+                     {%if nbEmployee.dept_name == department.deptName %}
+                        {{nbEmployee.nb_employees}}
+                     {% endif %}
+                {% endfor %}
                 <td>
                 
                     <a href="{{ path('app_department_show', {'id': department.id}) }}">show</a>
@@ -51,6 +58,22 @@
         {% endfor %}
         </tbody>
     </table>
+
+    <div>
+        <h3>Nombre total d'employés : 
+        {% set totalEmployees = nbEmployees|reduce((acc, item) => acc + item.nb_employees, 0) %}
+        {{ totalEmployees }}
+        </h3>
+    </div>
+
+    <div>
+        <h3>Nombre total de poste vacants :
+            {% set deptTitlesLength = deptTitles|length %}
+            {{ deptTitlesLength }} 
+        </h3>  
+        <a href="">Postuler</a>
+    </div>  
+     
 
     <a href="{{ path('app_department_new') }}">Create new</a>
 {% endblock %}

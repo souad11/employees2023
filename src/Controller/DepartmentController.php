@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Department;
 use App\Entity\DeptManager;
+use App\Entity\DeptTitle;
 use App\Form\DepartmentType;
 use App\Repository\DepartmentRepository;
+use App\Repository\DeptEmpRepository;
 use App\Repository\DeptManagerRepository;
-use Doctrine\ORM\EntityManager;
+use App\Repository\DeptTitleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,12 +20,23 @@ use Symfony\Component\Routing\Annotation\Route;
 class DepartmentController extends AbstractController
 {
     #[Route('/', name: 'app_department_index', methods: ['GET'])]
-    public function index(DepartmentRepository $departmentRepository, DeptManagerRepository $deptManagerRepository,): Response
+    public function index(EntityManagerInterface $em,DepartmentRepository $departmentRepository, DeptManagerRepository $deptManagerRepository,DeptTitleRepository $deptTitleRepository ): Response
     {
+        // Sélectionner tous les employés d'un département donné qui ont une to date au 9999-01-01
+        $conn = $em->getConnection();
+        //le nombre d'employés d'un departement donné qui ont une to date au 9999-01-01
+        $sql = 'SELECT departments.dept_name, COUNT(dept_emp.emp_no) AS nb_employees FROM departments INNER JOIN dept_emp ON departments.dept_no = dept_emp.dept_no WHERE dept_emp.to_date = "9999-01-01" GROUP BY departments.dept_name';
+        $stmt = $conn->executeQuery($sql);
+        $nbEmployees = $stmt->fetchAllAssociative();
+        
+
+        
 
         return $this->render('department/index.html.twig', [
             'departments' => $departmentRepository->findAll(),
             'deptManagers' => $deptManagerRepository->findAll(),
+            'deptTitles' => $deptTitleRepository->findAll(),
+            'nbEmployees' => $nbEmployees,
             
         ]);
     }

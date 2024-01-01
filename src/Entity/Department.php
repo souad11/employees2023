@@ -36,9 +36,13 @@ class Department
     #[ORM\OneToOne(mappedBy: 'departement', cascade: ['persist', 'remove'])]
     private ?DeptManager $deptManager = null;
 
+    #[ORM\OneToMany(mappedBy: 'department', targetEntity: DeptEmp::class)]
+    private Collection $deptEmps;
+
     public function __construct()
     {
         $this->deptTitles = new ArrayCollection();
+        $this->deptEmps = new ArrayCollection();
     }
 
 
@@ -145,6 +149,36 @@ class Department
         }
 
         $this->deptManager = $deptManager;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DeptEmp>
+     */
+    public function getDeptEmps(): Collection
+    {
+        return $this->deptEmps;
+    }
+
+    public function addDeptEmp(DeptEmp $deptEmp): static
+    {
+        if (!$this->deptEmps->contains($deptEmp)) {
+            $this->deptEmps->add($deptEmp);
+            $deptEmp->setDepartment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDeptEmp(DeptEmp $deptEmp): static
+    {
+        if ($this->deptEmps->removeElement($deptEmp)) {
+            // set the owning side to null (unless already changed)
+            if ($deptEmp->getDepartment() === $this) {
+                $deptEmp->setDepartment(null);
+            }
+        }
 
         return $this;
     }

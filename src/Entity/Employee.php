@@ -64,10 +64,14 @@ class Employee
     #[ORM\OneToOne(mappedBy: 'employee', cascade: ['persist', 'remove'])]
     private ?DeptManager $deptManager = null;
 
+    #[ORM\OneToMany(mappedBy: 'employee', targetEntity: DeptEmp::class)]
+    private Collection $deptEmps;
+
     public function __construct()
     {
         $this->demands = new ArrayCollection();
         $this->empTitles = new ArrayCollection();
+        $this->deptEmps = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -244,6 +248,36 @@ class Employee
         }
 
         $this->deptManager = $deptManager;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DeptEmp>
+     */
+    public function getDeptEmps(): Collection
+    {
+        return $this->deptEmps;
+    }
+
+    public function addDeptEmp(DeptEmp $deptEmp): static
+    {
+        if (!$this->deptEmps->contains($deptEmp)) {
+            $this->deptEmps->add($deptEmp);
+            $deptEmp->setEmployee($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDeptEmp(DeptEmp $deptEmp): static
+    {
+        if ($this->deptEmps->removeElement($deptEmp)) {
+            // set the owning side to null (unless already changed)
+            if ($deptEmp->getEmployee() === $this) {
+                $deptEmp->setEmployee(null);
+            }
+        }
 
         return $this;
     }
