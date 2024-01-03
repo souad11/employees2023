@@ -27,6 +27,10 @@ class EmployeeController extends AbstractController
     #[Route('/new', name: 'app_employee_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
+
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+
         $employee = new Employee();
         $form = $this->createForm(EmployeeType::class, $employee);
        
@@ -93,6 +97,9 @@ class EmployeeController extends AbstractController
     #[Route('/{id}/edit', name: 'app_employee_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Employee $employee, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
+        
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $form = $this->createForm(EmployeeType::class, $employee);
         $form->handleRequest($request);
 
@@ -140,6 +147,9 @@ class EmployeeController extends AbstractController
     #[Route('/{id}', name: 'app_employee_delete', methods: ['POST'])]
     public function delete(Request $request, Employee $employee, EntityManagerInterface $entityManager): Response
     {
+
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         if ($this->isCsrfTokenValid('delete'.$employee->getId(), $request->request->get('_token'))) {
             $entityManager->remove($employee);
             $entityManager->flush();

@@ -23,12 +23,24 @@
                     <a href="{{ path('app_dept_title_show', {'id': dept_title.id}) }}">show</a>
                     <a href="{{ path('app_dept_title_edit', {'id': dept_title.id}) }}">edit</a>
                 </td>
+                <td>
+                    <a href="{{ path('app_dept_title_apply', {'id': dept_title.id}) }}">Apply</a>
+                </td>
             </tr>
         {% else %}
             <tr>
                 <td colspan="2">no records found</td>
             </tr>
         {% endfor %}
+
+        <div>
+        {% for message in app.flashes('success') %}
+            <div class="flash-notice">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        </div>
         </tbody>
     </table>
 

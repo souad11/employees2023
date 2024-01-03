@@ -4,8 +4,11 @@ namespace App\Controller;
 
 use App\Entity\DeptTitle;
 use App\Form\DeptTitleType;
+use App\Form\ApplyType;
 use App\Repository\DeptTitleRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -78,4 +81,45 @@ class DeptTitleController extends AbstractController
 
         return $this->redirectToRoute('app_dept_title_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/apply/{id}', name: 'app_dept_title_apply', methods: ['GET', 'POST'])]
+public function apply(Request $request, DeptTitle $deptTitle, MailerInterface $mailer): Response
+{
+    $applyForm = $this->createForm(ApplyType::class);
+   
+    $applyForm->handleRequest($request);
+    $managerEmail = $deptTitle->getDepartment()->getDeptManager()->getEmployee()->getEmail();
+    if ($applyForm->isSubmitted() && $applyForm->isValid()) {
+        $data = $applyForm->getData();
+        
+        $message = (new Email())
+            ->from($data['email'])
+            ->to($managerEmail)
+            ->subject('Nouvelle candidature')
+            ->html(
+                $this->renderView(
+                    'dept_title/email.html.twig',
+                    [
+                        'dept_title' => $deptTitle,
+                        'data' => $data,
+                    ]
+                )
+            );
+    
+        $mailer->send($message);
+
+        
+
+        $this->addFlash('success', 'Votre candidature a bien été envoyée');
+
+        return $this->redirectToRoute('app_dept_title_index');
+    
+    }
+
+    return $this->render('dept_title/apply.html.twig', [
+        'dept_title' => $deptTitle,
+        'apply_form' => $applyForm->createView(),
+    ]);
+}
+
 }

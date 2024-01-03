@@ -21,7 +21,6 @@
         </thead>
         <tbody>
 
-
         {% for department in departments %}
             <tr>
                 <td>{{ department.id }}</td>
@@ -33,7 +32,7 @@
                 <td>{{ department.deptName }}</td>
                 <td>
                 {% for deptManager in deptManagers %}
-                   {%if deptManager.departement.id == department.id %}
+                   {%if deptManager.departement.id == department.id and deptManager.toDate ==  date('9999-01-01') %}
                     <img src="{{ asset('uploads/photos/' ~ deptManager.employee.photo) }}" alt="photo" width="100" height="100">
                 {% endif %}
                 {% endfor %}
@@ -71,7 +70,7 @@
             {% set deptTitlesLength = deptTitles|length %}
             {{ deptTitlesLength }} 
         </h3>  
-        <a href="">Postuler</a>
+        <a href="{{ path('app_dept_title_index') }}">Liste des postes vacants</a>
     </div>  
      
 
