@@ -6,6 +6,7 @@ use App\Repository\DemandRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DemandRepository::class)]
+#[ORM\Table(name: 'demands')]
 class Demand
 {
     #[ORM\Id]
