@@ -27,6 +27,8 @@ class DepartmentController extends AbstractController
         $stmt = $conn->executeQuery($sql);
         $nbEmployees = $stmt->fetchAllAssociative();
 
+
+        
         
 
         return $this->render('department/index.html.twig', [

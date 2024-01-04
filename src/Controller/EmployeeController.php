@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use App\Repository\DemandRepository;
 
 
 #[Route('/employee')]
@@ -156,5 +157,29 @@ class EmployeeController extends AbstractController
         }
 
         return $this->redirectToRoute('app_employee_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/{status}', name:'app_demand_update_status', methods: ['POST'])]
+    public function updateDemandStatus(DemandRepository $demandRepository, EntityManagerInterface $entityManager, $id, $status): Response
+    {
+        $demand = $demandRepository->find($id);
+
+        if(!$demand){
+            throw $this->createNotFoundException('Demande introuvable');
+        }
+        
+
+        
+        if($status == '1'){
+            $demand->setStatus(1);
+            
+        }elseif($status == '0'){
+            $demand->setStatus(0);
+        }
+        
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_employee_show', ['id' => $demand->getEmploye()->getId()], Response::HTTP_SEE_OTHER);
+
     }
 }
