@@ -1,5 +1,6 @@
 {% extends 'base.html.twig' %}
 
+
 {% block title %}Apply for {{ dept_title.title.title }}{% endblock %}
 
 {% block body %}
@@ -12,7 +13,6 @@
     {{ form_row(apply_form.phone) }}
     
     {{ form_row(apply_form.cv) }}
-    {{ form_row(apply_form.coverLetter) }}
     {{ form_row(apply_form.submit) }}
     {{ form_end(apply_form) }}
 {% endblock %}

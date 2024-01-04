@@ -1,12 +1,11 @@
-{% extends 'base.html.twig' %}
 {% block title %}Apply for {{ dept_title.title.title }}{% endblock %}
 
 {% block body %}
-    <h1>New Application for <strong>{{ deptTitle.title.title }}</strong></h1>
+    <h1>New Application for <strong>{{ dept_title.title.title }}</strong></h1>
 
-    <p>Applicant's name: {{ data.name }}</p>
+    <p>Applicant's name: {{ data.firstName}}</p>
 
     <p>Applicant's email address: {{ data.email }}</p>
 
-    <p>Applicant's message: {{ data.message }}</p>
+
 {% endblock %}

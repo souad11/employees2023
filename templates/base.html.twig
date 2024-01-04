@@ -34,7 +34,7 @@
                     <a class="nav-link" href="/logout">Se déconnecter</a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" href="">{{ app.user.firstName }}</a>
+                    <a class="nav-link" href="{{ path('app_employee_show', {'id': app.user.id})}}">{{ app.user.firstName }}</a>
                     </li>
                 {% endif %}
                 </ul>

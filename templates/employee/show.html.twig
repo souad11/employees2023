@@ -3,7 +3,7 @@
 {% block title %}Employee{% endblock %}
 
 {% block body %}
-    <h1>Employee</h1>
+    <h1>{{employee.firstName}} {{employee.lastName}}</h1>
 
     <table class="table">
         <tbody>
@@ -39,8 +39,36 @@
                 <th>Email</th>
                 <td>{{ employee.email }}</td>
             </tr>
+
+            {% if app.user.id == employee.id %}
+            
+            {% endif %}
+
+
         </tbody>
     </table>
+            <h1>Demands</h1>
+            {% for demand in employee.demands %}
+                <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>About</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ demand.id }}</td>
+                        <td>{{ demand.type}}</td>
+                        <td>{{ demand.status is not null ? (demand.status == 1 ? 'Accepted' : 'Refused') : 'En cours' }}</td>
+                        <td>{{ demand.about }}</td>
+                    <tr>
+                </tbody>
+            {% endfor %}
+            </table>
+
 
     <a href="{{ path('app_employee_index') }}">back to list</a>
 

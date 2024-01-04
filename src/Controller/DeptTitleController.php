@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 #[Route('/dept/title')]
 class DeptTitleController extends AbstractController
@@ -82,44 +83,70 @@ class DeptTitleController extends AbstractController
         return $this->redirectToRoute('app_dept_title_index', [], Response::HTTP_SEE_OTHER);
     }
 
+
     #[Route('/apply/{id}', name: 'app_dept_title_apply', methods: ['GET', 'POST'])]
-public function apply(Request $request, DeptTitle $deptTitle, MailerInterface $mailer): Response
-{
-    $applyForm = $this->createForm(ApplyType::class);
-   
-    $applyForm->handleRequest($request);
-    $managerEmail = $deptTitle->getDepartment()->getDeptManager()->getEmployee()->getEmail();
-    if ($applyForm->isSubmitted() && $applyForm->isValid()) {
-        $data = $applyForm->getData();
-        
-        $message = (new Email())
-            ->from($data['email'])
-            ->to($managerEmail)
-            ->subject('Nouvelle candidature')
-            ->html(
-                $this->renderView(
-                    'dept_title/email.html.twig',
-                    [
-                        'dept_title' => $deptTitle,
-                        'data' => $data,
-                    ]
-                )
-            );
+    public function apply(Request $request, DeptTitle $deptTitle, MailerInterface $mailer): Response
+    {
+        $applyForm = $this->createForm(ApplyType::class);
+       
+        $applyForm->handleRequest($request);
+        $managerEmail = $deptTitle->getDepartment()->getDeptManager()->getEmployee()->getEmail();
     
-        $mailer->send($message);
-
-        
-
-        $this->addFlash('success', 'Votre candidature a bien été envoyée');
-
-        return $this->redirectToRoute('app_dept_title_index');
+        if ($applyForm->isSubmitted() && $applyForm->isValid()) {
+            $data = $applyForm->getData();
     
+            // Gérez le téléchargement de la pièce jointe
+            $uploadedFile = $data['cv'];
+    
+            if ($uploadedFile) {
+                // Assurez-vous que le répertoire d'attachements existe
+                $attachmentsDirectory = $this->getParameter('attachments_directory');
+                if (!file_exists($attachmentsDirectory)) {
+                    mkdir($attachmentsDirectory);
+                }
+    
+                $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $newFilename = $originalFilename.'-'.uniqid().'.'.$uploadedFile->guessExtension();
+    
+                try {
+                    $uploadedFile->move($attachmentsDirectory, $newFilename);
+                } catch (FileException $e) {
+                    // Gérez l'erreur de téléchargement du fichier
+                    // Vous pouvez ajouter un message flash ou rediriger avec un message d'erreur
+                    $this->addFlash('error', 'Une erreur s\'est produite lors du téléchargement de la pièce jointe.');
+                    return $this->redirectToRoute('app_dept_title_apply', ['id' => $deptTitle->getId()]);
+                }
+    
+                // Attachez le fichier au message
+                $message = (new Email())
+                    ->from($data['email'])
+                    ->to($managerEmail)
+                    ->subject('Nouvelle candidature')
+                    ->html(
+                        $this->renderView(
+                            'dept_title/email.html.twig',
+                            [
+                                'dept_title' => $deptTitle,
+                                'data' => $data,
+                            ]
+                        )
+                    )
+                    ->attachFromPath($attachmentsDirectory.'/'.$newFilename); // Attachez le fichier
+            }
+    
+            // Envoyez le message
+            $mailer->send($message);
+    
+            $this->addFlash('success', 'Votre candidature a bien été envoyée');
+    
+            return $this->redirectToRoute('app_dept_title_index');
+        }
+    
+        return $this->render('dept_title/apply.html.twig', [
+            'dept_title' => $deptTitle,
+            'apply_form' => $applyForm->createView(),
+        ]);
     }
-
-    return $this->render('dept_title/apply.html.twig', [
-        'dept_title' => $deptTitle,
-        'apply_form' => $applyForm->createView(),
-    ]);
-}
+    
 
 }
