@@ -32,12 +32,6 @@ class ApplyType extends AbstractType
                 'required' => false,
             ])
 
-            
-            ->add('coverLetter', FileType::class, [
-                'label' => 'Cover Letter (PDF file)',
-                'required' => false,
-            ])
-
             ->add('submit', SubmitType::class, [
                 'label' => 'Apply',
             ]);

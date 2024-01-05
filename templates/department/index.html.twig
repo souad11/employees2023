@@ -12,10 +12,12 @@
                 <th>Description</th>
                 <th>Address</th>
                 <th>Roi</th>
-                <th>DeptName</th>
-                <th>ManagerPhoto</th>
-                <th>nombre d'employés</th>
+                <th>Departements</th>
+                <th>Manager's Pic</th>
+                <th>Number of Employees</th>
+                {% if is_granted('ROLE_ADMIN') %}
                 <th>actions</th>
+                {% endif %}
 
             </tr>
         </thead>
@@ -33,7 +35,7 @@
                 <td>
                 {% for deptManager in deptManagers %}
                    {%if deptManager.departement.id == department.id and deptManager.toDate ==  date('9999-01-01') %}
-                    <img src="{{ asset('uploads/photos/' ~ deptManager.employee.photo) }}" alt="photo" width="100" height="100">
+                    <img src="{{ asset('uploads/photos/' ~ deptManager.employee.id ~ '/' ~ deptManager.employee.photo) }}" alt="photo" width="100" height="100">
                 {% endif %}
                 {% endfor %}
                 </td>
@@ -44,11 +46,13 @@
                         {{nbEmployee.nb_employees}}
                      {% endif %}
                 {% endfor %}
+
+                {% if is_granted('ROLE_ADMIN') %}
                 <td>
-                
                     <a href="{{ path('app_department_show', {'id': department.id}) }}">show</a>
                     <a href="{{ path('app_department_edit', {'id': department.id}) }}">edit</a>
                 </td>
+                {% endif %}
             </tr>
         {% else %}
             <tr>
@@ -70,9 +74,10 @@
             {% set deptTitlesLength = deptTitles|length %}
             {{ deptTitlesLength }} 
         </h3>  
-        <a href="{{ path('app_dept_title_index') }}">Liste des postes vacants</a>
+        <a class="btn btn-success" href="{{ path('app_dept_title_index') }}">See vacant positions</a>
     </div>  
      
-
-    <a href="{{ path('app_department_new') }}">Create new</a>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a class="btn btn-secondary" href="{{ path('app_department_new') }}">Create new</a>
+    {% endif %}
 {% endblock %}

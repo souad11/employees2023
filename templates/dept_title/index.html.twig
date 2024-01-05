@@ -11,6 +11,7 @@
                 <th>Id</th>
                 <th>Departement</th>
                 <th>Fonctions</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -20,11 +21,11 @@
                 <td>{{ dept_title.department.deptName }}</td>
                 <td>{{ dept_title.title.title }}</td>
                 <td>
+                    {% if is_granted('ROLE_ADMIN') %}
                     <a href="{{ path('app_dept_title_show', {'id': dept_title.id}) }}">show</a>
                     <a href="{{ path('app_dept_title_edit', {'id': dept_title.id}) }}">edit</a>
-                </td>
-                <td>
-                    <a href="{{ path('app_dept_title_apply', {'id': dept_title.id}) }}">Apply</a>
+                    {% endif %}
+                    <a class = "btn btn-primary" href="{{ path('app_dept_title_apply', {'id': dept_title.id}) }}">Apply</a>
                 </td>
             </tr>
         {% else %}
@@ -43,6 +44,7 @@
         </div>
         </tbody>
     </table>
-
+    {% if is_granted('ROLE_ADMIN') %}
     <a href="{{ path('app_dept_title_new') }}">Create new</a>
+    {% endif %}
 {% endblock %}

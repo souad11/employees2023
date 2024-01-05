@@ -3,7 +3,7 @@
 {% block title %}Employee{% endblock %}
 
 {% block body %}
-    <h1>Employee</h1>
+    <h1>{{ employee.firstName }} {{ employee.lastName }}</h1>
 
     <table class="table">
         <tbody>
@@ -41,43 +41,47 @@
             </tr>
         </tbody>
     </table>
-            <h1>Demands</h1>
-            {% for demand in employee.demands %}
+            <h1>My demands</h1>
+            <a class="btn btn-primary" style="color: white;" href="{{ path('app_demand_new', {'id': employee.id}) }}">New Demand</a>
+            
+               
                 <table class="table">
                 <thead>
                     <tr>
                         <th>Id</th>
+                        <th>Employee</th>
                         <th>Type</th>
                         <th>Status</th>
                         <th>About</th>
+                        
                         <th>Actions</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
+                {% for demand in employee.demands %}
                     <tr>
                         <td>{{ demand.id }}</td>
+                        <td>{{ demand.employe.id }}</td>
                         <td>{{ demand.type}}</td>
                         <td>{{ demand.status is not null ? (demand.status == 1 ? 'Accepted' : 'Refused') : 'En cours' }}</td>
                         <td>{{ demand.about }}</td>
-                        <td class="d-flex">
-                            <form class="form-inline" action="{{ path('app_demand_update_status', {'id': demand.id, 'status': 1}) }}" method="post">
-                                <button class="btn btn-success" type="submit"><i class="fas fa-check"></i></button>
-                            </form>
                         
-                            <form class="form-inline" action="{{ path('app_demand_update_status', {'id': demand.id, 'status': 0}) }}" method="post">
-                                <button class="btn btn-danger" type="submit"><i class="fas fa-times"></i></button>
-                            </form>
-                        </td>
+                        <td class="d-flex">
+                            <a href="{{ path('app_demand_edit', {'id': demand.id}) }}" class="btn btn-primary">Edit</a>
+                            {{ include('demand/_delete_form.html.twig') }}
+                        </td>                        
                     <tr>
                 </tbody>
             {% endfor %}
             </table>
 
 
-    <a href="{{ path('app_employee_index') }}">back to list</a>
+    <a href="{{ path('app_employee_index') }}">Back to list</a>
 
 {% if is_granted('ROLE_ADMIN') %} {# ou {{ 'ROLE_ADMIN' in app.user.roles }}#}
     <a href="{{ path('app_employee_edit', {'id': employee.id}) }}">edit</a>
-{% endif %}
     {{ include('employee/_delete_form.html.twig') }}
+{% endif %}
+    
 {% endblock %}

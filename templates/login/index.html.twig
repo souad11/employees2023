@@ -16,7 +16,7 @@
         <input type="password" id="password" name="_password">
 
         
-        <input type="hidden" name="_target_path" value="/employee"/> 
+        <input type="hidden" name="_target_path" value="{{ path('app_home') }}">
 
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 

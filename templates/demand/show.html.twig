@@ -21,7 +21,7 @@
             </tr>
             <tr>
                 <th>Status</th>
-                <td>{{ demand.status ? 'Yes' : 'No' }}</td>
+                <td>{{ demand.status is not null ? (demand.status == 1 ? 'Accepted' : 'Refused') : 'En cours' }}</td>
             </tr>
         </tbody>
     </table>

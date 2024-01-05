@@ -17,6 +17,9 @@ class DemandController extends AbstractController
     #[Route('/', name: 'app_demand_index', methods: ['GET'])]
     public function index(DemandRepository $demandRepository): Response
     {
+
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         return $this->render('demand/index.html.twig', [
             'demands' => $demandRepository->findAll(),
         ]);
@@ -26,19 +29,27 @@ class DemandController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $demand = new Demand();
-        $form = $this->createForm(DemandType::class, $demand);
+
+        // Récupérer l'utilisateur actuel
+        $user = $this->getUser();
+
+        // Passer l'utilisateur au formulaire
+        $form = $this->createForm(DemandType::class, $demand, [
+            'user' => $user,
+        ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($demand);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_demand_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_employee_show', ['id' => $demand->getEmploye()->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('demand/new.html.twig', [
             'demand' => $demand,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -53,7 +64,11 @@ class DemandController extends AbstractController
     #[Route('/{id}/edit', name: 'app_demand_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Demand $demand, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(DemandType::class, $demand);
+        $user = $this->getUser();
+        $form = $this->createForm(DemandType::class, $demand, [
+            'user' => $user,
+            'is_edit_mode' => true, // Passer true pour le mode édition
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -65,13 +80,14 @@ class DemandController extends AbstractController
         return $this->render('demand/edit.html.twig', [
             'demand' => $demand,
             'form' => $form,
+            
         ]);
     }
 
     #[Route('/{id}', name: 'app_demand_delete', methods: ['POST'])]
     public function delete(Request $request, Demand $demand, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$demand->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$demand->getId(), $request->request->get('_token'))) { 
             $entityManager->remove($demand);
             $entityManager->flush();
         }
@@ -79,4 +95,25 @@ class DemandController extends AbstractController
         return $this->redirectToRoute('app_demand_index', [], Response::HTTP_SEE_OTHER);
     }
     
+    #[Route('/', name: 'app_demand_delete_all', methods: ['POST'])]
+    public function deleteAll(DemandRepository $demandRepository, EntityManagerInterface $entityManager): Response
+    {
+
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+
+        if ($this->isCsrfTokenValid('delete_all', $_POST['_token'])) {
+        $demands = $demandRepository->findAll();
+        
+            foreach($demands as $demand){
+                if($demand->isStatus() !== null ) {
+                    $entityManager->remove($demand);
+                    $entityManager->flush();
+                }
+
+            }
+        }
+        
+        return $this->redirectToRoute('app_demand_index', [], Response::HTTP_SEE_OTHER);
+    }
 }

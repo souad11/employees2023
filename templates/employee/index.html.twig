@@ -30,7 +30,8 @@
                 <td>{{ employee.gender.value}}</td>
                 <td>{{ employee.hireDate ? employee.hireDate|date('Y-m-d') : '' }}</td>
                 <td>{% if employee.getPhoto() %}
-                        <img src="{{ asset('uploads/photos/' ~ employee.getPhoto()) }}" alt="photo" width="100">
+                        <img src="{{ asset('uploads/photos/' ~ employee.id ~ '/' ~ employee.photo()) }}" alt="photo" width="100">
+
                     {% else %}
                         <p>Aucune photo disponible</p>
                     {% endif %}
