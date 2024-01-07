@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Department;
 use App\Form\DepartmentType;
 use App\Repository\DepartmentRepository;
-use App\Repository\DeptEmpRepository;
 use App\Repository\DeptManagerRepository;
 use App\Repository\DeptTitleRepository;
 use Doctrine\ORM\EntityManagerInterface;

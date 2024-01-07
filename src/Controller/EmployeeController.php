@@ -90,7 +90,7 @@ class EmployeeController extends AbstractController
     public function show(Employee $employee): Response
     {
 
-        // empêcher l'access à la page d'un employé par un autre employé saud l'admin
+        // empêcher l'access à la page d'un employé par un autre employé sauf l'admin
         if($this->getUser() != $employee && !$this->isGranted('ROLE_ADMIN')){
 
             //addfalsh
@@ -109,9 +109,21 @@ class EmployeeController extends AbstractController
     #[Route('/{id}/edit', name: 'app_employee_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Employee $employee, EntityManagerInterface $entityManager, SluggerInterface $slugger, ParameterBagInterface $parameterBag): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        if($this->getUser() != $employee && !$this->isGranted('ROLE_ADMIN')){
 
-        $form = $this->createForm(EmployeeType::class, $employee);
+            //addfalsh
+            $this->addFlash('danger', 'Vous n\'avez pas le droit d\'accéder à cette page');
+
+            return $this->redirectToRoute('app_home');
+            
+        }
+
+        $isUserEdit = $this->getUser() === $employee;
+
+        $form = $this->createForm(EmployeeType::class, $employee, 
+            ['is_user_edit' => $isUserEdit]
+        );
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

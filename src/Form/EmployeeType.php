@@ -8,19 +8,45 @@ use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Entity\Gender;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+
+
 
 class EmployeeType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+
+        $isUserEdit = $options['is_user_edit'];
+        
         $builder
-            ->add('birthDate')
-            ->add('firstName')
-            ->add('lastName')
-            ->add('gender', EnumType::class, ['class' => Gender::class])
-            ->add('hireDate')
+
+
+            ->add('birthDate', DateType::class, [
+                'disabled' => $isUserEdit,
+            ])
+
+
+            ->add('firstName', TextType::class, [
+                'disabled' => $isUserEdit,
+            ])
+            
+
+            ->add('lastName', TextType::class, [
+                'disabled' => $isUserEdit,
+            ])
+
+            ->add('gender', EnumType::class, [
+                'class' => Gender::class,
+                'disabled' => $isUserEdit,
+            ])
+            ->add('hireDate', DateType::class, [
+                'disabled' => $isUserEdit,
+            ])
             ->add('photo', FileType::class, [
                 'label' => 'Photo (JPG file)',
                 'mapped' => false,
@@ -35,7 +61,7 @@ class EmployeeType extends AbstractType
                     ])
                 ],
             ])
-            ->add('email')
+            ->add('email', EmailType::class)
         ;
     }
 
@@ -43,6 +69,7 @@ class EmployeeType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Employee::class,
+            'is_user_edit' => false,
         ]);
     }
 }
