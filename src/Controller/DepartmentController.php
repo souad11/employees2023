@@ -12,30 +12,48 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/department')]
 class DepartmentController extends AbstractController
 {
     #[Route('/', name: 'app_department_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $em,DepartmentRepository $departmentRepository, DeptManagerRepository $deptManagerRepository,DeptTitleRepository $deptTitleRepository ): Response
-    {
-        // Sélectionner tous les employés d'un département donné 
-        $conn = $em->getConnection();
-        //le nombre d'employés d'un departement donné
-        $sql = 'SELECT departments.dept_name, COUNT(dept_emp.emp_no) AS nb_employees FROM departments INNER JOIN dept_emp ON departments.dept_no = dept_emp.dept_no GROUP BY departments.dept_name';
-        $stmt = $conn->executeQuery($sql);
-        $nbEmployees = $stmt->fetchAllAssociative();
+        public function index(
+        PaginatorInterface $paginator,
+        DepartmentRepository $departmentRepository,
+        DeptManagerRepository $deptManagerRepository,
+        DeptTitleRepository $deptTitleRepository,
+        Request $request, EntityManagerInterface $em
+    ): Response {
+
+        // Récupérer les paramètres de tri depuis la requête
+        $sortField = $request->query->get('sort', 'id');  // Colonne de tri par défaut
+        $sortOrder = $request->query->get('direction', 'asc'); // Ordre de tri par défaut
+
+         // Sélectionner tous les employés d'un département donné 
+         $conn = $em->getConnection();
+         //le nombre d'employés d'un departement donné
+         $sql = 'SELECT departments.dept_name, COUNT(dept_emp.emp_no) AS nb_employees FROM departments INNER JOIN dept_emp ON departments.dept_no = dept_emp.dept_no GROUP BY departments.dept_name';
+         $stmt = $conn->executeQuery($sql);
+         $nbEmployees = $stmt->fetchAllAssociative();
 
 
-        
-        
+         // Récupérer tous les départements triés
+         $departments = $departmentRepository->findBy([], [$sortField => $sortOrder]);
+
+        $pagination = $paginator->paginate(
+            $departments,
+            $request->query->getInt('page', 1), // Récupérer le numéro de page depuis la requête
+            2 // Nombre d'éléments par page
+        );
 
         return $this->render('department/index.html.twig', [
-            'departments' => $departmentRepository->findAll(),
+            'pagination' => $pagination,
             'deptManagers' => $deptManagerRepository->findAll(),
             'deptTitles' => $deptTitleRepository->findAll(),
             'nbEmployees' => $nbEmployees,
-            
+            'sortField' => $sortField,
+            'sortOrder' => $sortOrder,
         ]);
     }
 

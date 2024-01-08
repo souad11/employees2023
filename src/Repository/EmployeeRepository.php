@@ -45,5 +45,18 @@ class EmployeeRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    public function findBySearchTerm($searchTerm)
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.firstName LIKE :searchTerm OR e.lastName LIKE :searchTerm OR e.email LIKE :searchTerm')
+            ->setParameter('searchTerm', '%' . $searchTerm . '%')
+            ->orderBy('e.id', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+        
+    }
     
 }

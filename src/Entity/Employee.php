@@ -75,7 +75,7 @@ class Employee implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'employee', cascade: ['persist', 'remove'])]
     private ?DeptManager $deptManager = null;
 
-    #[ORM\OneToMany(mappedBy: 'employee', targetEntity: DeptEmp::class)]
+    #[ORM\OneToMany(mappedBy: 'employee', targetEntity: DeptEmp::class, cascade: ['persist', 'remove'])]
     private Collection $deptEmps;
 
     public function __construct()

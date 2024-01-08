@@ -8,22 +8,26 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Description</th>
-                <th>Address</th>
-                <th>Roi</th>
-                <th>Departements</th>
-                <th>Manager's Pic</th>
-                <th>Number of Employees</th>
+                <th><a href="{{ path('app_department_index', {'sort': 'id', 'direction': sortField == 'id' and sortOrder == 'asc' ? 'desc' : 'asc'}) }}">Id</a></th>
+                <th><a href="{{ path('app_department_index', {'sort': 'description', 'direction': sortField == 'description' and sortOrder == 'asc' ? 'desc' : 'asc'}) }}">Description</a></th>
+                <th><a href="{{ path('app_department_index', {'sort': 'address', 'direction': sortField == 'address' and sortOrder == 'asc' ? 'desc' : 'asc'}) }}">Address</a></th>
+                <th><a href="{{ path('app_department_index', {'sort': 'roi', 'direction': sortField == 'roi' and sortOrder == 'asc' ? 'desc' : 'asc'}) }}">Roi</a></th>
+                <th><a href="{{ path('app_department_index', {'sort': 'deptName', 'direction': sortField == 'deptName' and sortOrder == 'asc' ? 'desc' : 'asc'}) }}">Departments</a></th>
+                <th>Manager's picture</th>
                 {% if is_granted('ROLE_ADMIN') %}
                 <th>actions</th>
                 {% endif %}
+
+
+                {# {{ dump(pagination)}}
+                {{ dump(sortField) }}
+                {{ dump(sortOrder) }} #}
 
             </tr>
         </thead>
         <tbody>
 
-        {% for department in departments %}
+        {% for department in pagination %}
             <tr>
                 <td>{{ department.id }}</td>
                 
@@ -62,15 +66,20 @@
         </tbody>
     </table>
 
+      <div class="pagination" style="width: 100%; display: flex; justify-content: center;">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+      
+
     <div>
-        <h3>Nombre total d'employés : 
+        <h3>Number of employees in the company :
         {% set totalEmployees = nbEmployees|reduce((acc, item) => acc + item.nb_employees, 0) %}
         {{ totalEmployees }}
         </h3>
     </div>
 
     <div>
-        <h3>Nombre total de poste vacants :
+        <h3>Number of vacant positions :
             {% set deptTitlesLength = deptTitles|length %}
             {{ deptTitlesLength }} 
         </h3>  
@@ -80,4 +89,7 @@
     {% if is_granted('ROLE_ADMIN') %}
         <a class="btn btn-secondary" href="{{ path('app_department_new') }}">Create new</a>
     {% endif %}
+
+
+    
 {% endblock %}

@@ -36,6 +36,12 @@ class DeptEmp
         return $this->id;
     }
 
+    public function __construct()
+    {
+        $this->fromDate = new \DateTime();
+        $this->toDate = new \DateTime('9999-01-01');
+    }
+
     public function getDepartment(): ?Department
     {
         return $this->department;

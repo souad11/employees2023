@@ -1,4 +1,19 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
+    {{ form_row(form.firstName) }}
+    {{ form_row(form.lastName) }}
+    {{ form_row(form.birthDate) }}
+    {{ form_row(form.gender) }}
+    {{ form_row(form.hireDate) }}
+    
+    {# Boucle sur la collection deptEmps #}
+    {% for deptEmpForm in form.deptEmps %}
+        <div>
+            {{ form_row(deptEmpForm.department) }}
+        </div>
+    {% endfor %}
+    
+    {{ form_row(form.photo) }}
+    {{ form_row(form.email) }}
+    
     <button class="btn">{{ button_label|default('Save') }}</button>
 {{ form_end(form) }}
