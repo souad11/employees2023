@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Department;
+use App\Entity\DeptManager;
 use App\Form\DepartmentType;
 use App\Repository\DepartmentRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -10,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Component\Pager\Paginator;
 
 #[Route('/department')]
 class DepartmentController extends AbstractController
@@ -17,9 +19,56 @@ class DepartmentController extends AbstractController
     #[Route('/', name: 'app_department_index', methods: ['GET'])]
     public function index(DepartmentRepository $departmentRepository): Response
     {
+        $departments = $departmentRepository->findAll();
+
+
+        $employeesByDepartment = [];
+        $posteVacantByDepartment = [];
+        $managerPhoto = [];
+
+        foreach ($departments as $department) {
+            //Relation deptEmp (employee associé a departement)
+            $employees = $department->getEmployee();
+            $employeesByDepartment[$department->getDeptName()] = count($employees);
+
+            
+            $posteVacant = $department->getDeptTitles()->count();
+            //nombre de postes vacants
+            $posteVacantByDepartment[$department->getDeptName()] = $posteVacant;
+
+            //Titles
+            $deptTitles = $department->getDeptTitles();
+            $titles = [];
+            
+            foreach ($deptTitles as $deptTitle) {
+                $titles[] = $deptTitle->getTitle();
+            }
+            $department->title = $titles;
+            //$titlesByDepartment[$department->getDeptName()] = $titles;
+
+            $managers = $department->getDeptManagers();
+            $managerPhotos = [];
+    
+            foreach ($managers as $manager) {
+                $employee = $manager->getEmployee();
+                $managerPhotos[] = $employee->getPhoto();
+            }
+        
+    
+            $department->managerPhoto = $managerPhotos;
+           
+        }
+
         return $this->render('department/index.html.twig', [
-            'departments' => $departmentRepository->findAll(),
+            'departments' => $departments,
+            'employeesByDepartment' => $employeesByDepartment,
+            'posteVacantByDepartment' => $posteVacantByDepartment,
+            'managerPhoto' => $managerPhoto,
+            'titles'=> $titles,
+            //'paginator' => $paginator,
+            //'titlesByDepartment' => $titlesByDepartment,
         ]);
+
     }
 
     #[Route('/new', name: 'app_department_new', methods: ['GET', 'POST'])]
