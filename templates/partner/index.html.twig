@@ -3,13 +3,12 @@
 {% block title %}Partner index{% endblock %}
 
 {% block body %}
-    <h1>Partner index</h1>
+    <h1>Nos partenaires</h1>
 
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Title</th>
+                <th>Nom</th>
                 <th>Url</th>
                 <th>Logo</th>
                 <th>actions</th>
@@ -18,10 +17,9 @@
         <tbody>
         {% for partner in partners %}
             <tr>
-                <td>{{ partner.id }}</td>
                 <td>{{ partner.title }}</td>
-                <td>{{ partner.url }}</td>
-                <td>{{ partner.logo }}</td>
+                <td><a href="{{ partner.url }}">{{ partner.url }}</a></td>
+                <td><img src="{{ asset('logoPartners/' ~ partner.logo) }}" alt="Logo" width="70" height="50"></td>
                 <td>
                     <a href="{{ path('app_partner_show', {'id': partner.id}) }}">show</a>
                     <a href="{{ path('app_partner_edit', {'id': partner.id}) }}">edit</a>
