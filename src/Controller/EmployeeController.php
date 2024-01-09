@@ -21,36 +21,53 @@ use App\Entity\DeptEmp;
 #[Route('/employee')]
 class EmployeeController extends AbstractController
 {
-    #[Route('/', name: 'app_employee_index', methods: ['GET'])]
-    public function index(EmployeeRepository $employeeRepository, PaginatorInterface $paginator, Request $request): Response
-    {
-        $searchTerm = $request->query->get('search');
+   #[Route('/', name: 'app_employee_index', methods: ['GET'])]
+public function index(EmployeeRepository $employeeRepository, PaginatorInterface $paginator, Request $request): Response
+{
+    if(!$this->isGranted('ROLE_ADMIN')){
+        //addfalsh
+        $this->addFlash('danger', 'Vous n\'avez pas le droit d\'accéder à cette page');
 
-         // Récupérer les paramètres de tri depuis la requête
-         $sortField = $request->query->get('sort', 'id');  // Colonne de tri par défaut
-         $sortOrder = $request->query->get('direction', 'asc'); // Ordre de tri par défaut
-
+        return $this->redirectToRoute('app_home');
         
-
-        if ($searchTerm) {
-        $employees = $employeeRepository->findBySearchTerm($searchTerm);
-        } else {
-        $employees = $employeeRepository->findBy([], [$sortField => $sortOrder]);
-        }
-
-        $pagination = $paginator->paginate(
-            $employees,
-            $request->query->getInt('page', 1), // Récupérer le numéro de page depuis la requête
-            10 // Nombre d'éléments par page
-        );
-
-        return $this->render('employee/index.html.twig', [
-            'pagination' => $pagination,
-            'searchTerm' => $searchTerm,
-            'sortField' => $sortField,
-            'sortOrder' => $sortOrder,
-        ]);
     }
+    
+
+    $searchTerm = $request->query->get('search');
+    $sortField1 = $request->query->get('sortField1', 'id');
+    $sortOrder1 = $request->query->get('sortOrder1', 'asc');
+    $sortField2 = $request->query->get('sortField2', 'id');
+    $sortOrder2 = $request->query->get('sortOrder2', 'asc');
+
+    $additionalSortFields = [
+        $sortField2 => $sortOrder2,
+    ];
+
+    $sortFields = [$sortField1 => $sortOrder1] + $additionalSortFields;
+
+    
+
+    if ($searchTerm) {
+        $employees = $employeeRepository->findBySearchTerm($searchTerm, $sortFields);
+    } else {
+        $employees = $employeeRepository->findBy([], $sortFields);
+    }
+
+    $pagination = $paginator->paginate(
+        $employees,
+        $request->query->getInt('page', 1),
+        10
+    );
+
+    return $this->render('employee/index.html.twig', [
+        'pagination' => $pagination,
+        'searchTerm' => $searchTerm,
+        'sortField1' => $sortField1,
+        'sortOrder1' => $sortOrder1,
+        'sortField2' => $sortField2,
+        'sortOrder2' => $sortOrder2,
+    ]);
+}
 
     #[Route('/new', name: 'app_employee_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, ParameterBagInterface $parameterBag): Response
@@ -59,7 +76,7 @@ class EmployeeController extends AbstractController
 
 
         $employee = new Employee();
-        // var_dump($employee->getDeptEmps());
+        // var_dump($employee->getDeptEmps());  
 
         $employee->addDeptEmp(new DeptEmp());
 
