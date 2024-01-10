@@ -20,6 +20,7 @@
             <option value="firstName" {% if sortField1 == 'firstName' %}selected{% endif %}>FirstName</option>
             <option value="lastName" {% if sortField1 == 'lastName' %}selected{% endif %}>LastName</option>
             <option value="gender" {% if sortField1 == 'gender' %}selected{% endif %}>Gender</option>
+            <option value="hireDate" {% if sortField1 == 'hireDate' %}selected{% endif %}>HireDate</option>
             <!-- Ajoutez d'autres champs de tri au besoin -->
         </select>
 
@@ -36,32 +37,38 @@
             <option value="firstName" {% if sortField2 == 'firstName' %}selected{% endif %}>FirstName</option>
             <option value="lastName" {% if sortField2 == 'lastName' %}selected{% endif %}>LastName</option>
             <option value="gender" {% if sortField2 == 'gender' %}selected{% endif %}>Gender</option>
+            <option value="hireDate" {% if sortField2 == 'hireDate' %}selected{% endif %}>HireDate</option>
             <!-- Ajoutez d'autres champs de tri au besoin -->
         </select>
 
         <label for="sortOrder2">Sort order:</label>
         <select id="sortOrder2" name="sortOrder2">
-            <option value="asc" {% if sortOrder2 == 'asc' %}selected{% endif %}>Ascending</option>
-            <option value="desc" {% if sortOrder2 == 'desc' %}selected{% endif %}>Descending</option>
+        <option value="asc" {% if sortOrder2 == 'asc' %}selected{% endif %}>Ascending</option>
+        <option value="desc" {% if sortOrder2 == 'desc' %}selected{% endif %}>Descending</option>
         </select>
+
+
+
+        
 
         <button type="submit">Apply</button>
     </form>
 
     <table class="table">
-        <thead>
+       <thead>
             <tr>
-                <th><a href="{{ path('app_employee_index', {'sortField1': 'id', 'sortOrder1': sortField1 == 'id' and sortOrder1 == 'asc' ? 'desc' : 'asc', 'sortField2': sortField2, 'sortOrder2': sortOrder2}) }}">Id</a></th>
-                <th><a href="{{ path('app_employee_index', {'sortField1': 'birthDate', 'sortOrder1': sortField1 == 'birthDate' and sortOrder1 == 'asc' ? 'desc' : 'asc', 'sortField2': sortField2, 'sortOrder2': sortOrder2}) }}">BirthDate</a></th>
-                <th><a href="{{ path('app_employee_index', {'sortField1': 'firstName', 'sortOrder1': sortField1 == 'firstName' and sortOrder1 == 'asc' ? 'desc' : 'asc', 'sortField2': sortField2, 'sortOrder2': sortOrder2}) }}">FirstName</a></th>
-                <th><a href="{{ path('app_employee_index', {'sortField1': 'lastName', 'sortOrder1': sortField1 == 'lastName' and sortOrder1 == 'asc' ? 'desc' : 'asc', 'sortField2': sortField2, 'sortOrder2': sortOrder2}) }}">LastName</a></th>
-                <th><a href="{{ path('app_employee_index', {'sortField1': 'gender', 'sortOrder1': sortField1 == 'gender' and sortOrder1 == 'asc' ? 'desc' : 'asc', 'sortField2': sortField2, 'sortOrder2': sortOrder2}) }}">Gender</a></th>
-                <th><a href="{{ path('app_employee_index', {'sortField1': 'hireDate', 'sortOrder1': sortField1 == 'hireDate' and sortOrder1 == 'asc' ? 'desc' : 'asc', 'sortField2': sortField2, 'sortOrder2': sortOrder2}) }}">HireDate</a></th>
-                <th>Photo</th>
-                <th>Email</th>
-                <th>actions</th>
+            <th><a href="{{ path('app_employee_index', {'sortField1': 'id', 'sortOrder1': sortField1 == 'id' and sortOrder1 == 'asc' ? 'desc' : 'asc', 'sortField2': sortField1 == 'id' ? sortField2 : 'id', 'sortOrder2': sortField1 == 'id' ? sortOrder2 : 'asc', 'search': searchTerm}) }}">Id</a></th>
+            <th><a href="{{ path('app_employee_index', {'sortField1': 'birthDate', 'sortOrder1': sortField1 == 'birthDate' and sortOrder1 == 'asc' ? 'desc' : 'asc', 'sortField2': sortField1 == 'birthDate' ? sortField2 : 'id', 'sortOrder2': sortField1 == 'birthDate' ? sortOrder2 : 'asc', 'search': searchTerm}) }}">BirthDate</a></th>
+            <th><a href="{{ path('app_employee_index', {'sortField1': 'firstName', 'sortOrder1': sortField1 == 'firstName' and sortOrder1 == 'asc' ? 'desc' : 'asc', 'sortField2': sortField1 == 'firstName' ? sortField2 : 'id', 'sortOrder2': sortField1 == 'firstName' ? sortOrder2 : 'asc', 'search': searchTerm}) }}">FirstName</a></th>
+            <th><a href="{{ path('app_employee_index', {'sortField1': 'lastName', 'sortOrder1': sortField1 == 'lastName' and sortOrder1 == 'asc' ? 'desc' : 'asc', 'sortField2': sortField1 == 'lastName' ? sortField2 : 'id', 'sortOrder2': sortField1 == 'lastName' ? sortOrder2 : 'asc', 'search': searchTerm}) }}">LastName</a></th>
+            <th><a href="{{ path('app_employee_index', {'sortField1': 'gender', 'sortOrder1': sortField1 == 'gender' and sortOrder1 == 'asc' ? 'desc' : 'asc', 'sortField2': sortField1 == 'gender' ? sortField2 : 'id', 'sortOrder2': sortField1 == 'gender' ? sortOrder2 : 'asc', 'search': searchTerm}) }}">Gender</a></th>
+            <th><a href="{{ path('app_employee_index', {'sortField1': 'hireDate', 'sortOrder1': sortField1 == 'hireDate' and sortOrder1 == 'asc' ? 'desc' : 'asc', 'sortField2': sortField1 == 'hireDate' ? sortField2 : 'id', 'sortOrder2': sortField1 == 'hireDate' ? sortOrder2 : 'asc', 'search': searchTerm}) }}">HireDate</a></th>
+            <th>Photo</th>
+            <th>Email</th>
+            <th>actions</th>
             </tr>
         </thead>
+
         <tbody>
         {% for employee in pagination %}
             

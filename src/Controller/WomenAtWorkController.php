@@ -25,8 +25,8 @@ class WomenAtWorkController extends AbstractController
                 SUM(CASE WHEN e.gender = :male THEN 1 ELSE 0 END) as maleCount
             FROM 
                 App\Entity\Employee e
-                JOIN App\Entity\DeptEmp de WITH e.id = de.empNo
-                JOIN App\Entity\Department d WITH de.deptNo = d.id
+                JOIN App\Entity\DeptEmp de WITH e.id = de.employee
+                JOIN App\Entity\Department d WITH de.department = d.id
             WHERE 
                 e.gender IN (:female, :male)
             GROUP BY 
@@ -114,7 +114,7 @@ class WomenAtWorkController extends AbstractController
         $queryManagerWoman = $entityManager->createQuery('
         SELECT COUNT(DISTINCT e.id) AS totalFemaleManagers
         FROM App\Entity\DeptManager m
-        JOIN App\Entity\Employee e WITH m.empNo = e.id
+        JOIN App\Entity\Employee e WITH m.employee = e.id
         WHERE e.gender = :female
         ');
     

@@ -46,17 +46,26 @@ class EmployeeRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-    public function findBySearchTerm($searchTerm)
-    {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.firstName LIKE :searchTerm OR e.lastName LIKE :searchTerm OR e.email LIKE :searchTerm')
-            ->setParameter('searchTerm', '%' . $searchTerm . '%')
-            ->orderBy('e.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-        
+public function findBySearchTerm($searchTerm, $sortField1, $sortOrder1, $sortField2, $sortOrder2)
+{
+    $queryBuilder = $this->createQueryBuilder('e')
+        ->andWhere('e.firstName LIKE :searchTerm OR e.lastName LIKE :searchTerm')
+        ->setParameter('searchTerm', '%' . $searchTerm . '%');
+
+    $allowedFields = ['id', 'birthDate', 'firstName', 'lastName', 'gender', 'hireDate']; // Add other fields as needed
+
+    if (in_array($sortField1, $allowedFields)) {
+        $queryBuilder->addOrderBy("e.$sortField1", $sortOrder1);
     }
+
+    if (in_array($sortField2, $allowedFields) && $sortField2 !== $sortField1) {
+        $queryBuilder->addOrderBy("e.$sortField2", $sortOrder2);
+    }
+
+    return $queryBuilder
+        ->setMaxResults(10)
+        ->getQuery()
+        ->getResult();
+}
     
 }

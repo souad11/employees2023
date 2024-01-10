@@ -12,62 +12,55 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use App\Repository\DemandRepository;
-use App\Repository\DepartmentRepository;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use App\Entity\Department;
+
 use App\Entity\DeptEmp;
 
 #[Route('/employee')]
 class EmployeeController extends AbstractController
 {
-   #[Route('/', name: 'app_employee_index', methods: ['GET'])]
-public function index(EmployeeRepository $employeeRepository, PaginatorInterface $paginator, Request $request): Response
-{
-    if(!$this->isGranted('ROLE_ADMIN')){
-        //addfalsh
-        $this->addFlash('danger', 'Vous n\'avez pas le droit d\'accéder à cette page');
+    #[Route('/', name: 'app_employee_index', methods: ['GET'])]
+    public function index(EmployeeRepository $employeeRepository, PaginatorInterface $paginator, Request $request): Response
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            //addfalsh
+            $this->addFlash('danger', 'Vous n\'avez pas le droit d\'accéder à cette page');
 
-        return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_home');
+        }
+
+        $searchTerm = $request->query->get('search');
+        $sortField1 = $request->query->get('sortField1', 'id');
+        $sortOrder1 = $request->query->get('sortOrder1', 'asc');
+        $sortField2 = $request->query->get('sortField2', 'id');
+        $sortOrder2 = $request->query->get('sortOrder2', 'asc');
+
+
+        $employees = $searchTerm
+        ? $employeeRepository->findBySearchTerm($searchTerm, $sortField1, $sortOrder1, $sortField2, $sortOrder2)
+        : $employeeRepository->findBy([], ['id' => 'asc']); // Default sorting
+
+
+
         
-    }
-    
 
-    $searchTerm = $request->query->get('search');
-    $sortField1 = $request->query->get('sortField1', 'id');
-    $sortOrder1 = $request->query->get('sortOrder1', 'asc');
-    $sortField2 = $request->query->get('sortField2', 'id');
-    $sortOrder2 = $request->query->get('sortOrder2', 'asc');
+        $pagination = $paginator->paginate(
+            $employees,
+            $request->query->getInt('page', 1),
+            10 
+        );
 
-    $additionalSortFields = [
-        $sortField2 => $sortOrder2,
-    ];
-
-    $sortFields = [$sortField1 => $sortOrder1] + $additionalSortFields;
-
-    
-
-    if ($searchTerm) {
-        $employees = $employeeRepository->findBySearchTerm($searchTerm, $sortFields);
-    } else {
-        $employees = $employeeRepository->findBy([], $sortFields);
+        return $this->render('employee/index.html.twig', [
+            'pagination' => $pagination,
+            'searchTerm' => $searchTerm,
+            'sortField1' => $sortField1,
+            'sortOrder1' => $sortOrder1,
+            'sortField2' => $sortField2,
+            'sortOrder2' => $sortOrder2,
+        ]);
     }
 
-    $pagination = $paginator->paginate(
-        $employees,
-        $request->query->getInt('page', 1),
-        10
-    );
-
-    return $this->render('employee/index.html.twig', [
-        'pagination' => $pagination,
-        'searchTerm' => $searchTerm,
-        'sortField1' => $sortField1,
-        'sortOrder1' => $sortOrder1,
-        'sortField2' => $sortField2,
-        'sortOrder2' => $sortOrder2,
-    ]);
-}
 
     #[Route('/new', name: 'app_employee_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, ParameterBagInterface $parameterBag): Response
