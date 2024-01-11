@@ -79,11 +79,15 @@ class Employee implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'employee', targetEntity: DeptEmp::class, cascade: ['persist', 'remove'])]
     private Collection $deptEmps;
 
+    #[ORM\OneToMany(mappedBy: 'employee', targetEntity: Salary::class)]
+    private Collection $salaries;
+
     public function __construct()
     {
         $this->demands = new ArrayCollection();
         $this->empTitles = new ArrayCollection();
         $this->deptEmps = new ArrayCollection();
+        $this->salaries = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -350,6 +354,36 @@ class Employee implements UserInterface, PasswordAuthenticatedUserInterface
     public function isAdmin(): bool
     {
         return in_array('ROLE_ADMIN', $this->roles);
+    }
+
+    /**
+     * @return Collection<int, Salary>
+     */
+    public function getSalaries(): Collection
+    {
+        return $this->salaries;
+    }
+
+    public function addSalary(Salary $salary): static
+    {
+        if (!$this->salaries->contains($salary)) {
+            $this->salaries->add($salary);
+            $salary->setEmployee($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSalary(Salary $salary): static
+    {
+        if ($this->salaries->removeElement($salary)) {
+            // set the owning side to null (unless already changed)
+            if ($salary->getEmployee() === $this) {
+                $salary->setEmployee(null);
+            }
+        }
+
+        return $this;
     }
 
 }

@@ -30,16 +30,18 @@ class DepartmentController extends AbstractController
         $sortField = $request->query->get('sort', 'id');  // Colonne de tri par défaut
         $sortOrder = $request->query->get('direction', 'asc'); // Ordre de tri par défaut
 
+
          // Sélectionner tous les employés d'un département donné 
-         $conn = $em->getConnection();
-         //le nombre d'employés d'un departement donné
-         $sql = 'SELECT departments.dept_name, COUNT(dept_emp.emp_no) AS nb_employees FROM departments INNER JOIN dept_emp ON departments.dept_no = dept_emp.dept_no GROUP BY departments.dept_name';
-         $stmt = $conn->executeQuery($sql);
-         $nbEmployees = $stmt->fetchAllAssociative();
+        //  $conn = $em->getConnection();
+        //  //le nombre d'employés d'un departement donné
+        //  $sql = 'SELECT departments.dept_name, COUNT(dept_emp.emp_no) AS nb_employees FROM departments INNER JOIN dept_emp ON departments.dept_no = dept_emp.dept_no GROUP BY departments.dept_name';
+        //  $stmt = $conn->executeQuery($sql);
+        //  $nbEmployees = $stmt->fetchAllAssociative();
 
+        $nbEmployees = $departmentRepository->getEmployeeCountByDepartment();
 
-         // Récupérer tous les départements triés
-         $departments = $departmentRepository->findBy([], [$sortField => $sortOrder]);
+        // Récupérer tous les départements triés
+        $departments = $departmentRepository->findBy([], [$sortField => $sortOrder]);
 
         $pagination = $paginator->paginate(
             $departments,

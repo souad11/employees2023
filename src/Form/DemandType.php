@@ -27,7 +27,7 @@ class DemandType extends AbstractType
 
         $roles= $user->getRoles();
 
-        var_dump($roles);
+        var_dump($user);
 
         
         if ($options['is_edit_mode'] == false) {
@@ -40,19 +40,13 @@ class DemandType extends AbstractType
                 ],
             ])
             ->add('about')
-            ->add('status', TextType::class, [
-                'disabled' => true,
-                'data' => null,
-            ])
-            ->add('employe', EntityType::class, [
-
-                'class' => Employee::class,
-                'query_builder' => function (EmployeeRepository $er) use ($user) {
-                    return $er->createQueryBuilder('e')
-                        ->where('e.id = :user') 
-                        ->setParameter('user', $user)
-                    ;
-                },
+        
+            ->add('employe', TextType::class, [
+            'data' => $user->getFirstName() . ' ' . $user->getLastName(),
+            'attr' => [
+                'readonly' => true, // Empêcher la modification du champ
+            ],
+                
             ]);
 
             

@@ -45,9 +45,11 @@
                 </td>
 
                 <td>
+                
                 {% for nbEmployee in nbEmployees %}
-                     {%if nbEmployee.dept_name == department.deptName %}
-                        {{nbEmployee.nb_employees}}
+                    
+                     {%if nbEmployee.deptName == department.deptName %}
+                        {{nbEmployee.employeeCount}}
                      {% endif %}
                 {% endfor %}
 
@@ -73,7 +75,7 @@
 
     <div>
         <h3>Number of employees in the company :
-        {% set totalEmployees = nbEmployees|reduce((acc, item) => acc + item.nb_employees, 0) %}
+        {% set totalEmployees = nbEmployees|reduce((acc, item) => acc + item.employeeCount, 0) %}
         {{ totalEmployees }}
         </h3>
     </div>

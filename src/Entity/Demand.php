@@ -32,6 +32,11 @@ class Demand
         return $this->id;
     }
 
+    public function __construct()
+    {
+        $this->status = null;
+    }
+
     public function getEmploye(): ?Employee
     {
         return $this->employe;

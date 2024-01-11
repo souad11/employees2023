@@ -6,6 +6,7 @@ use App\Entity\Department;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+
 /**
  * @extends ServiceEntityRepository<Department>
  *
@@ -45,4 +46,18 @@ class DepartmentRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+ /**
+     * @Method("countEmployeesByDepartment")
+     */
+    public function getEmployeeCountByDepartment()
+    {
+        return $this->createQueryBuilder('d')
+            ->select('d.deptName AS deptName, COUNT(de.department) AS employeeCount')
+            ->leftJoin('d.deptEmps', 'de')
+            ->where("de.toDate = '9999-01-01'")
+            ->groupBy('d.deptName')
+            ->getQuery()
+            ->getResult();
+    }
 }
