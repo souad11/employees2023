@@ -1,0 +1,247 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+<div class="container">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@latest"></script>
+
+<style>
+    #graphique{
+        width: 50%;
+        height: 50%;
+    }
+            table {
+            border-collapse: collapse;
+            width: 50%;
+            margin: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: grey;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        caption {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+</style>
+
+
+<h1 class="text-center mt-3">{{ title }}</h1>
+
+    <h4 class="mt-5 mb-3 text-center">Les 3 départements avec le plus de femmes</h4>
+    <div class="row justify-content-center">
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Département</th>
+                    <th>Total Femmes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dept, data in topThreeDepartments %}
+                    <tr>
+                        <td>{{ dept }}</td>
+                        <td>{{ data.totalFemale }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <h4 class="mt-5 mb-3 text-center">Les 3 départements avec le moins de femmes</h4>
+    <div class="row justify-content-center">
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Département</th>
+                    <th>Total Femmes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dept, data in bottomThreeDepartments %}
+                    <tr>
+                        <td>{{ dept }}</td>
+                        <td>{{ data.totalFemale }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+<h4 class="text-center mt-3 mb-3">Nombre de femme manager</h4>
+<div class="row justify-content-center">
+    <p>{{ countWOmenManager }}</p>
+</div>
+
+<h4 class="text-center mt-3 mb-4">Proportion de femmes et d’hommes au total (secteur)</h4>
+
+<div class="row justify-content-center">
+    
+    {% for deptName, dataByYear in datesEngagement %}
+        <div id="graphique" class="col-5">
+            <h4 class="text-center">{{ deptName }}</h4>
+            <canvas id="{{ deptName }}"></canvas>
+        </div>
+    {% endfor %}
+    
+</div>
+<h3 class="text-center mt-4 mb-3">Courbe annuelle du nombre de femmes au total</h3>
+<div id="femmesChartContainer" class="mb-3">
+    <canvas id="femmesChart"></canvas>
+</div>
+
+<script>
+
+    var departmentCharts = [];
+
+    {% for deptName, dataByYear in datesEngagement %}
+      var labels = [];
+      var hommesData = [];
+      var femmesData = [];
+      var totalData = [];
+
+      {% for year, counts in dataByYear %}
+        labels.push("{{ year }}");
+        hommesData.push({{ counts.hommes }});
+        femmesData.push({{ counts.femmes }});
+        totalData.push({{ counts.total }});
+      {% endfor %}
+
+      var departmentChart = {
+        deptName: "{{ deptName }}",
+        labels: labels,
+        hommesData: hommesData,
+        femmesData: femmesData,
+        totalData: totalData
+      };
+
+      departmentCharts.push(departmentChart);
+    {% endfor %}
+
+    // Création des graphiques par département
+    departmentCharts.forEach(function(departmentChart) {
+      var ctx = document.getElementById(departmentChart.deptName).getContext('2d');
+      var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: departmentChart.labels,
+          datasets: [
+            {
+              label: 'Hommes',
+              data: departmentChart.hommesData,
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+            },
+            {
+              label: 'Femmes',
+              data: departmentChart.femmesData,
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 1
+            },
+            {
+              label: 'Total',
+              data: departmentChart.totalData,
+              backgroundColor: 'rgba(255, 206, 86, 0.2)',
+              borderColor: 'rgba(255, 206, 86, 1)',
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    });
+  
+</script>
+<script>
+    var femmesData = {};
+    var years = [];
+
+    {% for deptName, dataByYear in datesEngagement %}
+        {% for year, counts in dataByYear %}
+            var currentYear = "{{ year }}";
+            if (!femmesData[currentYear]) {
+                femmesData[currentYear] = 0;
+                years.push(currentYear);
+            }
+            femmesData[currentYear] += {{ counts.femmes }};
+        {% endfor %}
+    {% endfor %}
+
+    // Tri des années
+    years.sort();
+
+    // Création du graphique
+    var ctx = document.getElementById('femmesChart').getContext('2d');
+    var femmesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: years,
+            datasets: [{
+                label: 'Nombre Total de Femmes par Année',
+                data: years.map(function(year) {
+                    return femmesData[year];
+                }),
+                borderColor: 'rgba(173, 216, 230, 1)',
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Année'
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Nombre de Femmes'
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+
+</div>
+{% endblock %}
+
