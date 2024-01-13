@@ -3,32 +3,75 @@
 {% block title %}Department index{% endblock %}
 
 {% block body %}
+<div class="container">
     <h1>Department index</h1>
 
-    <table class="table">
+
+        <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>Nom du département</th>
+                <th>Photo du manager</th>
                 <th>Description</th>
-                <th>Address</th>
-                <th>Roi</th>
-                <th>DeptName</th>
-                <th>actions</th>
+                <th>Nombre d'employées</th>
+                <th>Poste vacants</th>
+                <th>Nom des postes vacants</th>
+                <th>ROI</th>
             </tr>
         </thead>
         <tbody>
         {% for department in departments %}
             <tr>
-                <td>{{ department.id }}</td>
-                <td>{{ department.description }}</td>
-                <td>{{ department.address }}</td>
-                <td>{{ department.roi }}</td>
                 <td>{{ department.deptName }}</td>
+                <td>
+                    {% if department.managerPhoto is defined and department.managerPhoto|length > 0 %}
+                        {% for photo in department.managerPhoto %}
+                            <img src="{{ asset(photo) }}" alt="Photo du manager" width="70" height="50">
+                        {% endfor %}
+                    {% else %}
+                        <p>pas de photo de manager pour ce département.</p>
+                    {% endif %}
+                </td>
+                
+                <td>{{ department.description }}</td>
+            
+                <td>{{ employeesByDepartment[department.deptName] }}</td>
+                
+                <td>{{ posteVacantByDepartment[department.deptName] }}</td>
+
+                {# <td>{% for departmentName, titles in titlesByDepartment %}
+                    {% for title in titles %}
+                        {{ title.title }}
+                    {% endfor %}
+                {% endfor %}</td> #}
+
+                <td>{% for title in department.title %}
+                    {{ title.title }}
+                {% endfor %}
+                <a href="{{path('app_dept_title_index')}}">Postulez</a>
+                </td>
+
+                <td>{{ department.roi }}</td>
+
+                
+
+
+
+             <td>
+
+</td>
+
+
                 <td>
                     <a href="{{ path('app_department_show', {'id': department.id}) }}">show</a>
                     <a href="{{ path('app_department_edit', {'id': department.id}) }}">edit</a>
                 </td>
-            </tr>
+
+                </tr>
+
+
+
+
         {% else %}
             <tr>
                 <td colspan="6">no records found</td>
@@ -38,4 +81,5 @@
     </table>
 
     <a href="{{ path('app_department_new') }}">Create new</a>
+    </div>
 {% endblock %}

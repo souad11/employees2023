@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<div class="container mt-4">
+{% block title %}<h1 class="apply">Postuler pour {{ departmentId }}</h1>{% endblock %}
+<div class="form-group .row">
+{{ form_start(form) }}
+    {{ form_widget(form) }}
+{{ form_end(form) }}
+</div> 
+{% endblock %}
