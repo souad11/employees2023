@@ -23,4 +23,17 @@
         <button type="submit">login</button>
     </form>
 
+    {% for message in app.session.flashbag.get('danger') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+
+    {% if app.request.attributes.get('message') %}
+        <div class="alert alert-success">
+            {{ app.request.attributes.get('message') }}
+        </div>
+    {% endif %}
+
 {% endblock %}

@@ -11,23 +11,29 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use App\Repository\DemandRepository;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Knp\Component\Pager\PaginatorInterface;
-
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\DeptEmp;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/employee')]
+//message attribut de sécurité
 class EmployeeController extends AbstractController
 {
     #[Route('/', name: 'app_employee_index', methods: ['GET'])]
     public function index(EmployeeRepository $employeeRepository, PaginatorInterface $paginator, Request $request): Response
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            //addfalsh
+        if ($this->denyAccessUnlessGranted('ROLE_ADMIN')){
+            //redirection vers la page de login avec un message flash
             $this->addFlash('danger', 'Vous n\'avez pas le droit d\'accéder à cette page');
-
             return $this->redirectToRoute('app_home');
+        }
+        
+        if ($this->denyAccessUnlessGranted('ROLE_USER')) {
+            //redirection vers la page de login avec un message flash
+            $this->addFlash('danger', 'Vous devez vous connecter pour accéder à cette page');
+            return $this->redirectToRoute('app_login');
         }
 
         $searchTerm = $request->query->get('search');
@@ -36,13 +42,13 @@ class EmployeeController extends AbstractController
         $sortField2 = $request->query->get('sortField2', 'id');
         $sortOrder2 = $request->query->get('sortOrder2', 'asc');
 
-
-        $employees = $searchTerm
-        ? $employeeRepository->findBySearchTerm($searchTerm, $sortField1, $sortOrder1, $sortField2, $sortOrder2)
-        : $employeeRepository->findBy([], ['id' => 'asc']); // Default sorting
-
-
-
+        $employees = $employeeRepository->findBySearchTerm(
+            $searchTerm,
+            $sortField1,
+            $sortOrder1,
+            $sortField2,
+            $sortOrder2
+        ) ?: $employeeRepository->findBy([], ['id' => 'asc']); // Default sorting
         
 
         $pagination = $paginator->paginate(
@@ -63,7 +69,7 @@ class EmployeeController extends AbstractController
 
 
     #[Route('/new', name: 'app_employee_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, ParameterBagInterface $parameterBag): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, ParameterBagInterface $parameterBag, UserPasswordHasherInterface $passwordHasher): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -115,6 +121,12 @@ class EmployeeController extends AbstractController
 
                 $employee->setPhoto($newFilename);
             }
+
+            // Générer le mot de passe
+            $plaintextPassword = 'epfc'; // $this->generateRandomPassword();
+            $hashedPassword = $passwordHasher->hashPassword($employee, $plaintextPassword);
+            $employee->setPassword($hashedPassword);
+            
             
            
             $entityManager->persist($employee);
@@ -156,7 +168,7 @@ class EmployeeController extends AbstractController
     public function edit(Request $request, Employee $employee, EntityManagerInterface $entityManager, SluggerInterface $slugger, ParameterBagInterface $parameterBag): Response
     {
         if($this->getUser() != $employee && !$this->isGranted('ROLE_ADMIN')){
-
+            
             //addfalsh
             $this->addFlash('danger', 'Vous n\'avez pas le droit d\'accéder à cette page');
 
@@ -184,6 +196,7 @@ class EmployeeController extends AbstractController
                 if ($oldPhoto) {
                     unlink($parameterBag->get('photo_directory') . '/' . $employee->getId() . '/' . $oldPhoto);
                 }
+            
 
                 // ajout de la nouvelle photo
                 $originalFilename = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
@@ -222,4 +235,5 @@ class EmployeeController extends AbstractController
 
         return $this->redirectToRoute('app_employee_index', [], Response::HTTP_SEE_OTHER);
     }
+
 }

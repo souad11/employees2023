@@ -18,7 +18,17 @@ class DemandController extends AbstractController
     public function index(DemandRepository $demandRepository): Response
     {
 
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        if ($this->denyAccessUnlessGranted('ROLE_ADMIN')) {
+            //redirection vers la page de login avec un message flash
+            $this->addFlash('danger', 'Vous n\'avez pas le droit d\'accéder à cette page');
+            return $this->redirectToRoute('app_home');
+        }
+        
+        if ($this->denyAccessUnlessGranted('ROLE_USER')) {
+            //redirection vers la page de login avec un message flash
+            $this->addFlash('danger', 'Vous devez vous connecter pour accéder à cette page');
+            return $this->redirectToRoute('app_login');
+        }
 
         return $this->render('demand/index.html.twig', [
             'demands' => $demandRepository->findAll(),
@@ -27,7 +37,13 @@ class DemandController extends AbstractController
 
     #[Route('/new', name: 'app_demand_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
+    {        
+        if ($this->denyAccessUnlessGranted('ROLE_USER')) {
+            //redirection vers la page de login avec un message flash
+            $this->addFlash('danger', 'Vous devez vous connecter pour accéder à cette page');
+            return $this->redirectToRoute('app_login');
+        }
+
         $demand = new Demand();
 
         // Récupérer l'utilisateur actuel
@@ -127,14 +143,13 @@ class DemandController extends AbstractController
             throw $this->createNotFoundException('Demande introuvable');
         }
         
-
-        
         if($status == '1'){
             $demand->setStatus(1);
             
         }elseif($status == '0'){
             $demand->setStatus(0);
         }
+        $demand->setStatus($status == '1' ? 1 : 0);
         
         $entityManager->flush();
 
