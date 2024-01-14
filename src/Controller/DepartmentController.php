@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Department;
+use App\Entity\DeptManager;
 use App\Form\DepartmentType;
 use App\Repository\DepartmentRepository;
 use App\Repository\DeptManagerRepository;
@@ -12,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Component\Pager\Paginator;
 
 #[Route('/department')]
 class DepartmentController extends AbstractController
@@ -19,24 +21,31 @@ class DepartmentController extends AbstractController
     #[Route('/', name: 'app_department_index', methods: ['GET'])]
     public function index(EntityManagerInterface $em,DepartmentRepository $departmentRepository, DeptManagerRepository $deptManagerRepository,DeptTitleRepository $deptTitleRepository ): Response
     {
+
         // Sélectionner tous les employés d'un département donné 
         $conn = $em->getConnection();
         //le nombre d'employés d'un departement donné
         $sql = 'SELECT departments.dept_name, COUNT(dept_emp.emp_no) AS nb_employees FROM departments INNER JOIN dept_emp ON departments.dept_no = dept_emp.dept_no GROUP BY departments.dept_name';
         $stmt = $conn->executeQuery($sql);
         $nbEmployees = $stmt->fetchAllAssociative();
-
-
-        
-        
+      
+            $managers = $department->getDeptManagers();
+            $managerPhotos = [];
+    
+            foreach ($managers as $manager) {
+                $employee = $manager->getEmployee();
+                $managerPhotos[] = $employee->getPhoto();
+            }
+            $department->managerPhoto = $managerPhotos;
 
         return $this->render('department/index.html.twig', [
             'departments' => $departmentRepository->findAll(),
             'deptManagers' => $deptManagerRepository->findAll(),
             'deptTitles' => $deptTitleRepository->findAll(),
             'nbEmployees' => $nbEmployees,
-            
-        ]);
+            'managerPhoto' => $managerPhoto,
+         ]);
+
     }
 
     #[Route('/new', name: 'app_department_new', methods: ['GET', 'POST'])]

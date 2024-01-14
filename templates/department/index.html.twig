@@ -3,41 +3,42 @@
 {% block title %}Department index{% endblock %}
 
 {% block body %}
+<div class="container">
     <h1>Department index</h1>
 
-    <table class="table">
+
+        <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>Nom du département</th>
+                <th>Photo du manager</th>
                 <th>Description</th>
-                <th>Address</th>
-                <th>Roi</th>
-                <th>Departements</th>
-                <th>Manager's Pic</th>
-                <th>Number of Employees</th>
-                {% if is_granted('ROLE_ADMIN') %}
+                <th>ROI</th>
+                <th>Nombre d'employées</th>
+                <th>Poste vacants</th>
+                <th>Nom des postes vacants</th>
+                
+                 {% if is_granted('ROLE_ADMIN') %}
                 <th>actions</th>
                 {% endif %}
-
             </tr>
         </thead>
         <tbody>
 
         {% for department in departments %}
             <tr>
-                <td>{{ department.id }}</td>
-                
-                <td>{{ department.description }}</td>
-
-                <td>{{ department.address }}</td>
-                <td>{{ department.roi }}</td>
+            
                 <td>{{ department.deptName }}</td>
+                <td>{{ department.description }}</td>
+                <td>{{ department.roi }}</td>
                 <td>
-                {% for deptManager in deptManagers %}
-                   {%if deptManager.departement.id == department.id and deptManager.toDate ==  date('9999-01-01') %}
-                    <img src="{{ asset('uploads/photos/' ~ deptManager.employee.id ~ '/' ~ deptManager.employee.photo) }}" alt="photo" width="100" height="100">
-                {% endif %}
-                {% endfor %}
+                    {% if department.managerPhoto is defined and department.managerPhoto|length > 0 %}
+                        {% for photo in department.managerPhoto %}
+                            <img src="{{ asset(photo) }}" alt="Photo du manager" width="70" height="50">
+                        {% endfor %}
+                    {% else %}
+                        <p>pas de photo de manager pour ce département.</p>
+                    {% endif %}
                 </td>
 
                 <td>
@@ -54,6 +55,7 @@
                 </td>
                 {% endif %}
             </tr>
+
         {% else %}
             <tr>
                 <td colspan="6">no records found</td>
@@ -61,7 +63,6 @@
         {% endfor %}
         </tbody>
     </table>
-
     <div>
         <h3>Nombre total d'employés : 
         {% set totalEmployees = nbEmployees|reduce((acc, item) => acc + item.nb_employees, 0) %}

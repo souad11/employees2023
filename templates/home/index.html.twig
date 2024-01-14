@@ -1,49 +1,144 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}{% endblock %}
-
 {% block body %}
 <style>
+      #map { width: 500px; height: 250px;}
+      .features-icons .features-icons-item {
+  max-width: 20rem;
+}
 </style>
 <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
 
-<div class="example-wrapper">
-    <h1> {{ title }}! ✅</h1>
-    <h3>Qui sommes nous</h3>
-    <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
-    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
-    nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse 
-    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia 
-    deserunt mollit anim id est laborum."</p>
-
-    <h3>Communiqué de presse</h3>
-    <ul>
-        {% for linkId, linkData in links %}
-            <li>
-                {{ linkData['id'] }} - <a href="{{ linkData['url'] }}" target="_blank">{{ linkData['url'] }}</a>
-                <a href="{{ path('download_pdf', {'linkId': linkId}) }}" target="_blank">Télécharger en PDF</a>
-            </li>
-        {% endfor %}
-    </ul>
-    <h3>Documents</h3>
-    <h3>QR Code pour le téléchargement de l'application</h3>
-    <div id="qrcode"></div>
-
-    <script>
-        var qrcode = new QRCode(document.getElementById("qrcode"), {
-            text: "http://localhost:8080/",
-            width: 100,
-            height: 100
-        });
-    </script>
-</div>
-
-<div>
-    {% for message in app.flashes('danger') %}
-        <div class="alert alert-danger">
-            {{ message }}
+<div class="container">
+{% for message in app.flashes('danger') %}
+    <div class="alert alert-danger">
+        {{ message }}
+    </div>
+{% endfor %}
+    <div class="row">
+        <div class="col-8 mx-auto">
+            <img src="{{ asset('images/employees.jpg') }}" alt="employees" width="100%" class="">
         </div>
-    {% endfor %}
+    </div>
 
+    <div class="row">
+        <div class="col-8 mx-auto mb-5">
+            <h3 class="text-center mb-5">Qui sommes nous</h3>
+            <p class="col-9 mx-auto">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
+            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse 
+            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia 
+            deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."</p>
+        </div>
+    </div>
+
+    <h3 class="text-center p-2 mb-5">Communiqué de presse</h3>
+    <div class= "row justify-content-center mt-4">
+        {% for id, details in linkDetails %}
+            <div class="col-3 text-center  class="text-sm"">
+            <h4><a href="{{ details.url }}" target="_blank" d-flex justify-content-between align-items-center">{{ details.url }}</a></h4>
+            <p class="lead mb-0">Ready to use with your own content, or customize the source files!</p>
+            <a href="{{ path('download_pdf', {'linkId': id}) }}" target="_blank" class="ml-auto mt-2">Télécharger en PDF</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    
+    <div class="row justify-content-center mt-5">
+        <div class="col-4">
+            <h3 class="text-center mt-4">Documents</h3>
+        </div>
+    </div>
+
+     <h3 class="text-center mb-5 mt-4">Team</h3>
+    <div class="row justify-content-center">
+        <div class="col-2 text-center">    
+                <img class="img-fluid rounded-circle mb-3" src="{{ asset('images/profil1.png') }}" alt="profil" style="width: 120px; height: 120px;" />
+                <h5>Souad R.</h5>
+                <p class="font-weight-light mb-0">"Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."</p>
+        </div>
+        <div class="col-2 text-center">    
+                <img class="img-fluid rounded-circle mb-3" src="{{ asset('images/profil1.png') }}" alt="profil" style="width: 120px; height: 120px;" />
+                <h5>Oxana E.</h5>
+                <p class="font-weight-light mb-0">"Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."</p>
+        </div>
+        <div class="col-2 text-center">    
+                <img class="img-fluid rounded-circle mb-3" src="{{ asset('images/profil.jpg') }}" alt="profil" style="width: 120px; height: 120px;" />
+                <h5>Nils H.</h5>
+                <p class="font-weight-light mb-0">"Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."</p>
+        </div>
+        <div class="col-2 text-center">    
+                <img class="img-fluid rounded-circle mb-3" src="{{ asset('images/profil.jpg') }}" alt="profil" style="width: 120px; height: 120px;" />
+                <h5>Redouan S.</h5>
+                <p class="font-weight-light mb-0">"Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."</p>
+        </div>
+    </div>
+    <h3 class="text-center   mt-5 mb-5">Localisation</h3>
+    <div class="row mb-4">   
+        <div class="col-6 d-flex justify-content-end">
+            <iframe src="https://maps.google.com/maps?q={epfc}&amp;ll={50.83941, 4.33845}&amp;z=14&amp;t=m&amp;output=embed" width="400" height="200" frameborder="0" style="border:0;" allowfullscreen></iframe>
+        </div>
+        <div class="col-5 mt-8 my-auto">
+            <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+             Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure 
+             dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."</p>
+        </div>
+    </div>
+    
+    <div class="row bg-light" style="height:200px">
+        <div class="col-2">
+        </div>
+        <div class="col-8 ">
+            <div class="row mt-3">
+                <div class="col-3">
+                    <h5>Réseaux sociaux</h5>
+                    <ul class="list-group ">
+                        <li class="list-group-item border-0 bg-light mb-n3">
+                            <a href="https://www.facebook.com/" class="text-decoration-none">
+                                 Facebook
+                            </a>
+                        </li>
+                        <li class="list-group-item border-0 bg-light mb-n3">
+                            <a href="https://twitter.com/" class="text-decoration-none">
+                                 Twitter
+                            </a>
+                        </li>
+                        <li class="list-group-item border-0 bg-light mb-n3">
+                            <a href="https://www.instagram.com/" class="text-decoration-none">
+                                 Instagram
+                            </a>
+                        </li>
+                        <li class="list-group-item border-0 bg-light mb-n3">
+                            <a href="https://www.linkedin.com/" class="text-decoration-none">
+                                <i class="bi bi-linkedin"></i> LinkedIn
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="ml-auto">
+                    <h5 class="text-center mb-4">Télécharger notre application</h5>
+                    <div class="d-flex justify-content-center">
+                        <div id="qrcode"></div>
+                        <script>
+                            var qrcode = new QRCode(document.getElementById("qrcode"), {
+                                text: "http://google.com/",
+                                width: 100,
+                                height: 100
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        <div class="col-2">
+        </div>
+    </div> 
+    <div class="row d-flex justify-content-center bg-light">
+        <p>&copy; 2024 Red-one. Tous droits réservés.</p>
+    </div>      
 </div>
 {% endblock %}

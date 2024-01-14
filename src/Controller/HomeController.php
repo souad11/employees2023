@@ -7,38 +7,35 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Link;
+use App\Repository\LinkRepository;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
 class HomeController extends AbstractController
 {
-    #[Route('/home/page', name: 'app_home')]
-    public function index(EntityManagerInterface $entityManager): Response
-    {   
-        $query = $entityManager->createQueryBuilder();
-    $query->select([
-            'l.id',
-            'l.url',
-        ])
-        ->from('App\Entity\Link', 'l')
-        ->orderBy('l.id', 'ASC');
-    $results = $query->getQuery()->getResult();
 
-        $links=[];
-        foreach ($results as $result) {
-            $id = $result['id'];
-            $links[$id] = $result;
+    #[Route('/home', name: 'app_home')]
+    public function index(EntityManagerInterface $entityManager, LinkRepository $linkRepository): Response
+    {   
+        $linksHome = $linkRepository->findAll();
+        $linkDetails = [];
+        foreach($linksHome as $link) {
+            $id = $link->getId();
+            $linkDetails[$id] = $link;
+
         }
 
         return $this->render('home/index.html.twig', [
-            'title' => 'Accueil',
-            'links' => $links,
+            'title' => 'Home',
+            'linkDetails' => $linkDetails,
         ]);
     }
+
     #[Route('/download-pdf/{linkId}', name: 'download_pdf')]
-    public function generatePdfAction(EntityManagerInterface $entityManager, $linkId): Response
+    public function generatePdfAction(LinkRepository $linkRepository, $linkId): Response
     {
-        $link = $entityManager->getRepository(Link::class)->find($linkId); 
+
+        $link = $linkRepository->find($linkId); 
 
         if (!$link) {
             throw $this->createNotFoundException('Lien non trouvé');
@@ -50,8 +47,6 @@ class HomeController extends AbstractController
             throw new \Exception("Impossible de récupérer le contenu depuis l'URL.");
         }
         $content = mb_convert_encoding($content, 'UTF-8');
-        // var_dump($content);
-        // exit;
 
         $options = new Options();
         $options->set('isHtml5ParserEnabled', true);
@@ -70,4 +65,5 @@ class HomeController extends AbstractController
 
         return $response;
     }
+
 }

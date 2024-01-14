@@ -6,22 +6,20 @@ use App\Repository\DeptManagerRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\table('dept_manager')]
+
 #[ORM\Entity(repositoryClass: DeptManagerRepository::class)]
 class DeptManager
 {
+
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\OneToOne(inversedBy: 'deptManager', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(name: 'dept_no', referencedColumnName: 'dept_no', nullable: false)]
-    private ?Department $departement = null;
-
-    #[ORM\OneToOne(inversedBy: 'deptManager', cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(inversedBy: 'deptManagers')]
     #[ORM\JoinColumn(name: 'emp_no', referencedColumnName: 'emp_no', nullable: false)]
     private ?Employee $employee = null;
+
+    #[ORM\Id]
+    #[ORM\ManyToOne(inversedBy: 'deptManagers')]
+    #[ORM\JoinColumn(name: 'dept_no', referencedColumnName: 'dept_no', nullable: false)]
+    private ?Department $department = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $fromDate = null;
@@ -29,31 +27,32 @@ class DeptManager
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $toDate = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getDepartement(): ?Department
-    {
-        return $this->departement;
-    }
-
-    public function setDepartement(Department $departement): static
-    {
-        $this->departement = $departement;
-
-        return $this;
-    }
+    // public function getId(): ?int
+    // {
+    //     return $this->id;
+    // }
 
     public function getEmployee(): ?Employee
     {
         return $this->employee;
     }
 
-    public function setEmployee(Employee $employee): static
+    public function setEmployee(?Employee $employee): static
     {
         $this->employee = $employee;
+
+
+        return $this;
+    }
+
+    public function getDepartment(): ?Department
+    {
+        return $this->department;
+    }
+
+    public function setDepartment(?Department $department): static
+    {
+        $this->department = $department;
 
         return $this;
     }
