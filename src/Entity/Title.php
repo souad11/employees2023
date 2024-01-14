@@ -25,9 +25,13 @@ class Title
     #[ORM\OneToMany(mappedBy: 'title', targetEntity: DeptTitle::class)]
     private Collection $deptTitles;
 
+    #[ORM\OneToMany(mappedBy: 'title', targetEntity: EmpTitle::class)]
+    private Collection $empTitles;
+
     public function __construct()
     {
         $this->deptTitles = new ArrayCollection();
+        $this->empTitles = new ArrayCollection();
     }
 
 
@@ -84,6 +88,36 @@ class Title
             // set the owning side to null (unless already changed)
             if ($deptTitle->getTitle() === $this) {
                 $deptTitle->setTitle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EmpTitle>
+     */
+    public function getEmpTitles(): Collection
+    {
+        return $this->empTitles;
+    }
+
+    public function addEmpTitle(EmpTitle $empTitle): static
+    {
+        if (!$this->empTitles->contains($empTitle)) {
+            $this->empTitles->add($empTitle);
+            $empTitle->setTitle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmpTitle(EmpTitle $empTitle): static
+    {
+        if ($this->empTitles->removeElement($empTitle)) {
+            // set the owning side to null (unless already changed)
+            if ($empTitle->getTitle() === $this) {
+                $empTitle->setTitle(null);
             }
         }
 

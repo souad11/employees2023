@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New EmpTitle{% endblock %}
+
+{% block body %}
+    <h1>Create new EmpTitle</h1>
+
+    {{ include('emp_title/_form.html.twig') }}
+
+    <a href="{{ path('app_emp_title_index') }}">back to list</a>
+{% endblock %}

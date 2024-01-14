@@ -6,6 +6,7 @@ use App\Repository\DeptManagerRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+
 #[ORM\Entity(repositoryClass: DeptManagerRepository::class)]
 class DeptManager
 {
@@ -39,6 +40,7 @@ class DeptManager
     public function setEmployee(?Employee $employee): static
     {
         $this->employee = $employee;
+
 
         return $this;
     }

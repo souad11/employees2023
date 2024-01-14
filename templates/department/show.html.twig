@@ -24,8 +24,16 @@
                 <td>{{ department.roi }}</td>
             </tr>
             <tr>
-                <th>DeptName</th>
+                <th>Nom du departement</th>
                 <td>{{ department.deptName }}</td>
+            </tr>
+            <tr>
+                <th>Manager</th>
+                <td>{{ deptManager.employee.firstName }} {{ deptManager.employee.lastName }}</td>
+            </tr>
+            <tr>
+                <th>Photo</th>
+                <td><img src="{{ asset('uploads/photos/' ~ deptManager.employee.photo) }}" alt="photo" width="100" height="100"></td>
             </tr>
         </tbody>
     </table>

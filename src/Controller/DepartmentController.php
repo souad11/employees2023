@@ -6,6 +6,8 @@ use App\Entity\Department;
 use App\Entity\DeptManager;
 use App\Form\DepartmentType;
 use App\Repository\DepartmentRepository;
+use App\Repository\DeptManagerRepository;
+use App\Repository\DeptTitleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,35 +19,16 @@ use Knp\Component\Pager\Paginator;
 class DepartmentController extends AbstractController
 {
     #[Route('/', name: 'app_department_index', methods: ['GET'])]
-    public function index(DepartmentRepository $departmentRepository): Response
+    public function index(EntityManagerInterface $em,DepartmentRepository $departmentRepository, DeptManagerRepository $deptManagerRepository,DeptTitleRepository $deptTitleRepository ): Response
     {
-        $departments = $departmentRepository->findAll();
 
-
-        $employeesByDepartment = [];
-        $posteVacantByDepartment = [];
-        $managerPhoto = [];
-
-        foreach ($departments as $department) {
-            //Relation deptEmp (employee associé a departement)
-            $employees = $department->getEmployee();
-            $employeesByDepartment[$department->getDeptName()] = count($employees);
-
-            
-            $posteVacant = $department->getDeptTitles()->count();
-            //nombre de postes vacants
-            $posteVacantByDepartment[$department->getDeptName()] = $posteVacant;
-
-            //Titles
-            $deptTitles = $department->getDeptTitles();
-            $titles = [];
-            
-            foreach ($deptTitles as $deptTitle) {
-                $titles[] = $deptTitle->getTitle();
-            }
-            $department->title = $titles;
-            //$titlesByDepartment[$department->getDeptName()] = $titles;
-
+        // Sélectionner tous les employés d'un département donné 
+        $conn = $em->getConnection();
+        //le nombre d'employés d'un departement donné
+        $sql = 'SELECT departments.dept_name, COUNT(dept_emp.emp_no) AS nb_employees FROM departments INNER JOIN dept_emp ON departments.dept_no = dept_emp.dept_no GROUP BY departments.dept_name';
+        $stmt = $conn->executeQuery($sql);
+        $nbEmployees = $stmt->fetchAllAssociative();
+      
             $managers = $department->getDeptManagers();
             $managerPhotos = [];
     
@@ -53,21 +36,15 @@ class DepartmentController extends AbstractController
                 $employee = $manager->getEmployee();
                 $managerPhotos[] = $employee->getPhoto();
             }
-        
-    
             $department->managerPhoto = $managerPhotos;
-           
-        }
 
         return $this->render('department/index.html.twig', [
-            'departments' => $departments,
-            'employeesByDepartment' => $employeesByDepartment,
-            'posteVacantByDepartment' => $posteVacantByDepartment,
+            'departments' => $departmentRepository->findAll(),
+            'deptManagers' => $deptManagerRepository->findAll(),
+            'deptTitles' => $deptTitleRepository->findAll(),
+            'nbEmployees' => $nbEmployees,
             'managerPhoto' => $managerPhoto,
-            'titles'=> $titles,
-            //'paginator' => $paginator,
-            //'titlesByDepartment' => $titlesByDepartment,
-        ]);
+         ]);
 
     }
 
@@ -110,10 +87,11 @@ class DepartmentController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_department_show', methods: ['GET'])]
-    public function show(Department $department): Response
+    public function show(Department $department,DeptManagerRepository $deptManagerRepository): Response
     {
         return $this->render('department/show.html.twig', [
             'department' => $department,
+            'deptManager' => $deptManagerRepository->findOneBy(['departement' => $department]),
         ]);
     }
 

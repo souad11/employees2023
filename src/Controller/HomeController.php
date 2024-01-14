@@ -13,6 +13,7 @@ use Dompdf\Options;
 
 class HomeController extends AbstractController
 {
+
     #[Route('/home', name: 'app_home')]
     public function index(EntityManagerInterface $entityManager, LinkRepository $linkRepository): Response
     {   
@@ -47,7 +48,6 @@ class HomeController extends AbstractController
         }
         $content = mb_convert_encoding($content, 'UTF-8');
 
-
         $options = new Options();
         $options->set('isHtml5ParserEnabled', true);
         $options->set('isPhpEnabled', true);
@@ -66,5 +66,4 @@ class HomeController extends AbstractController
         return $response;
     }
 
-   
 }

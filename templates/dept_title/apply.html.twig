@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Apply for {{ dept_title.title.title }}{% endblock %}
+
+{% block body %}
+    <h1>Apply for {{ dept_title.title.title }} in {{ dept_title.department.deptName }}</h1>
+
+    {{ form_start(apply_form) }}
+    {{ form_row(apply_form.firstName) }}
+    {{ form_row(apply_form.lastName) }}
+    {{ form_row(apply_form.email) }}
+    {{ form_row(apply_form.phone) }}
+    {{ form_row(apply_form.cv) }}
+    {{ form_row(apply_form.submit) }}
+    {{ form_end(apply_form) }}
+{% endblock %}

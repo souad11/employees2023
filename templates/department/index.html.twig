@@ -13,16 +13,24 @@
                 <th>Nom du département</th>
                 <th>Photo du manager</th>
                 <th>Description</th>
+                <th>ROI</th>
                 <th>Nombre d'employées</th>
                 <th>Poste vacants</th>
                 <th>Nom des postes vacants</th>
-                <th>ROI</th>
+                
+                 {% if is_granted('ROLE_ADMIN') %}
+                <th>actions</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
+
         {% for department in departments %}
             <tr>
+            
                 <td>{{ department.deptName }}</td>
+                <td>{{ department.description }}</td>
+                <td>{{ department.roi }}</td>
                 <td>
                     {% if department.managerPhoto is defined and department.managerPhoto|length > 0 %}
                         {% for photo in department.managerPhoto %}
@@ -32,45 +40,21 @@
                         <p>pas de photo de manager pour ce département.</p>
                     {% endif %}
                 </td>
-                
-                <td>{{ department.description }}</td>
-            
-                <td>{{ employeesByDepartment[department.deptName] }}</td>
-                
-                <td>{{ posteVacantByDepartment[department.deptName] }}</td>
 
-                {# <td>{% for departmentName, titles in titlesByDepartment %}
-                    {% for title in titles %}
-                        {{ title.title }}
-                    {% endfor %}
-                {% endfor %}</td> #}
-
-                <td>{% for title in department.title %}
-                    {{ title.title }}
+                <td>
+                {% for nbEmployee in nbEmployees %}
+                     {%if nbEmployee.dept_name == department.deptName %}
+                        {{nbEmployee.nb_employees}}
+                     {% endif %}
                 {% endfor %}
-                <a href="{{path('app_dept_title_index')}}">Postulez</a>
-                </td>
 
-                <td>{{ department.roi }}</td>
-
-                
-
-
-
-             <td>
-
-</td>
-
-
+                {% if is_granted('ROLE_ADMIN') %}
                 <td>
                     <a href="{{ path('app_department_show', {'id': department.id}) }}">show</a>
                     <a href="{{ path('app_department_edit', {'id': department.id}) }}">edit</a>
                 </td>
-
-                </tr>
-
-
-
+                {% endif %}
+            </tr>
 
         {% else %}
             <tr>
@@ -79,7 +63,22 @@
         {% endfor %}
         </tbody>
     </table>
-
-    <a href="{{ path('app_department_new') }}">Create new</a>
+    <div>
+        <h3>Nombre total d'employés : 
+        {% set totalEmployees = nbEmployees|reduce((acc, item) => acc + item.nb_employees, 0) %}
+        {{ totalEmployees }}
+        </h3>
     </div>
+
+    <div>
+        <h3>Nombre total de poste vacants :
+            {% set deptTitlesLength = deptTitles|length %}
+            {{ deptTitlesLength }} 
+        </h3>  
+        <a class="btn btn-success" href="{{ path('app_dept_title_index') }}">See vacant positions</a>
+    </div>  
+     
+    {% if is_granted('ROLE_ADMIN') %}
+        <a class="btn btn-secondary" href="{{ path('app_department_new') }}">Create new</a>
+    {% endif %}
 {% endblock %}

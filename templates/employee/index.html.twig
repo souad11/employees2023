@@ -21,6 +21,7 @@
         </thead>
         <tbody>
         {% for employee in employees %}
+            
             <tr>
                 <td>{{ employee.id }}</td>
                 <td>{{ employee.birthDate ? employee.birthDate|date('Y-m-d') : '' }}</td>
@@ -28,11 +29,22 @@
                 <td>{{ employee.lastName }}</td>
                 <td>{{ employee.gender.value}}</td>
                 <td>{{ employee.hireDate ? employee.hireDate|date('Y-m-d') : '' }}</td>
-                <td>{{ employee.photo }}</td>
+                <td>{% if employee.getPhoto() %}
+                        <img src="{{ asset('uploads/photos/' ~ employee.id ~ '/' ~ employee.photo()) }}" alt="photo" width="100">
+                        {% if app.user.id == employee.id %}
+                        <a href="{{ asset('uploads/photos/' ~ employee.id ~ '/' ~ employee.photo()) }}" download>Download</a>
+                        {% endif %}
+                    {% else %}
+                        <p>Aucune photo disponible</p>
+                    {% endif %}
+                </td>
                 <td>{{ employee.email }}</td>
                 <td>
                     <a href="{{ path('app_employee_show', {'id': employee.id}) }}">show</a>
+                    {% if is_granted('ROLE_ADMIN') %}
                     <a href="{{ path('app_employee_edit', {'id': employee.id}) }}">edit</a>
+                {% endif %}
+                
                 </td>
             </tr>
         {% else %}
@@ -42,6 +54,7 @@
         {% endfor %}
         </tbody>
     </table>
-
+{% if is_granted('ROLE_ADMIN') %} {# ou {{ 'ROLE_ADMIN' in app.user.roles }}#}
     <a href="{{ path('app_employee_new') }}">Create new</a>
+{% endif %}
 {% endblock %}
