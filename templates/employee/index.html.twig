@@ -82,7 +82,6 @@
                 <td>{{ employee.hireDate ? employee.hireDate|date('Y-m-d') : '' }}</td>
                 <td>{% if employee.getPhoto() %}
                         <img src="{{ asset('uploads/photos/' ~ employee.id ~ '/' ~ employee.photo()) }}" alt="photo" width="100">
-                        
                         {% if app.user.id == employee.id %}
                         <a href="{{ asset('uploads/photos/' ~ employee.id ~ '/' ~ employee.photo()) }}" download>Download</a>
                         {% endif %}

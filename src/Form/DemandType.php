@@ -27,9 +27,7 @@ class DemandType extends AbstractType
 
         $roles= $user->getRoles();
 
-        var_dump($user);
-
-        
+        // dans le cas où on crée une nouvelle demande 
         if ($options['is_edit_mode'] == false) {
         $builder
             ->add('type', ChoiceType::class, [
@@ -40,16 +38,16 @@ class DemandType extends AbstractType
                 ],
             ])
             ->add('about')
-        
+            
             ->add('employe', TextType::class, [
-            'data' => $user->getFirstName() . ' ' . $user->getLastName(),
-            'attr' => [
-                'readonly' => true, // Empêcher la modification du champ
-            ],
-                
+                'data' => $user->getFirstName() . ' ' . $user->getLastName(),
+                'attr' => [
+                    'readonly' => true, // Empêcher la modification du champ
+                ],
+                'mapped' => false, // Ne pas lier ce champ à l'entité Employee
             ]);
 
-            
+            // dans le cas où on édite une demande en tant qu'Aministrateur
         } else if ($options['is_edit_mode'] == true && in_array('ROLE_ADMIN', $roles)) {
                 $builder->add('status', ChoiceType::class, [
                     'choices' => [
@@ -74,8 +72,9 @@ class DemandType extends AbstractType
                 ->add('about');
                 
         } else {
+            // dans le cas où on édite une demande en tant qu'employé
             $builder 
-
+            
             ->add('type', ChoiceType::class, [
                 'choices' => [
                     'Salary' => 'Salary',
@@ -85,21 +84,12 @@ class DemandType extends AbstractType
             ])
 
             ->add('about')
-            
-            ->add('status', TextType::class, [
-                'disabled' => true,
-                'data' => null,
-            ])
 
-            ->add('employe', EntityType::class, [
-
-                'class' => Employee::class,
-                'query_builder' => function (EmployeeRepository $er) use ($user) {
-                    return $er->createQueryBuilder('e')
-                        ->where('e.id = :user')
-                        ->setParameter('user', $user)
-                    ;
-                },
+            ->add('employe', TextType::class, [
+                'data' => $user->getFirstName() . ' ' . $user->getLastName(),
+                'attr' => [
+                    'readonly' => true,
+                ],
             ]);
 
 

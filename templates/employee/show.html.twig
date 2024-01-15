@@ -51,7 +51,10 @@
        
     </table>
             <h1>My demands</h1>
+
+            {% if app.user.id == employee.id %}
             <a class="btn btn-primary" style="color: white;" href="{{ path('app_demand_new', {'id': employee.id}) }}">New Demand</a>
+            {% endif %}
             
                
                 <table class="table">

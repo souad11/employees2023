@@ -9,5 +9,9 @@
 
     <a href="{{ path('app_employee_show', {'id': app.user.id}) }}">back to profil</a>
 
-    {{ dump(app.user.id)}}
+    {% for message in app.flashes('danger') %}
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
 {% endblock %}

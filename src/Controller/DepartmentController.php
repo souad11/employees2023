@@ -18,11 +18,6 @@ use Knp\Component\Pager\PaginatorInterface;
 class DepartmentController extends AbstractController
 {
     #[Route('/', name: 'app_department_index', methods: ['GET'])]public function index( PaginatorInterface $paginator,DepartmentRepository $departmentRepository,DeptManagerRepository $deptManagerRepository,DeptTitleRepository $deptTitleRepository,Request $request): Response {
-        if ($this->denyAccessUnlessGranted('ROLE_ADMIN')) {
-            //redirection vers la page de login avec un message flash
-            $this->addFlash('danger', 'Vous n\'avez pas le droit d\'accéder à cette page');
-            return $this->redirectToRoute('app_home');
-        }
         
         if ($this->denyAccessUnlessGranted('ROLE_USER')) {
             //redirection vers la page de login avec un message flash
