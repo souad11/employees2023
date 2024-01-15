@@ -73,17 +73,30 @@ class DemandController extends AbstractController
 
             
         if ($form->isSubmitted() && $form->isValid()) {
-            
 
+            $depUser = '';
+
+            foreach ($user->getDeptEmps() as $deptEmp) {
+
+                if ($deptEmp->getToDate()->format('Y-m-d') === '9999-01-01') {
+                    $depUser = $deptEmp->getDepartment()->getDeptName();
+                }
+            }
+            
             // Vérification personnalisée pour le type "Salary"
             if ($demand->getType() === 'Salary' && !is_numeric($demand->getAbout())) {
                 $this->addFlash('danger', 'Si le type est "Salary", le champ "About" doit être un nombre.');
             
-            } elseif ($demand->getType() === 'Reassignment' && !$departmentRepository->find($demand->getAbout())) {
+            } elseif ($demand->getType() === 'Reassignment' && !$departmentRepository->findOneBy(['deptName' => $demand->getAbout()])) {
 
                 // Vérification personnalisée pour le type "Reassignment"
                 $this->addFlash('danger', 'Si le type est "Reassignment", le champ "About" doit correspondre à un département existant.
                  Exemple: Marketin, Finance,Human Resources, Production, Development, Quality Management,Sales,Research, Customer Service');
+
+                 //si le departement du demandeur est le meme que celui de la demande
+            } elseif ($depUser == $demand->getAbout()) {
+                
+                $this->addFlash('danger', 'Vous ne pouvez pas faire une demande pour votre propre département');
             
             } else {
 

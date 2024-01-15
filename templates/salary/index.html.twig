@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello SalaryController!{% endblock %}
+
+{% block body %}
+
+
+<h1>All Salaries</h1>
+
+{% for employee in employees %}
+    <h2>{{ employee.getFirstName() }} {{ employee.getLastName() }}</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Salary</th>
+                <th>Start date</th>
+                <th>End date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for salary in employee.getSalaries() %}
+                <tr>
+                    <td>{{ salary.getSalary() }} €</td>
+                    <td>{{ salary.getFromDate()|date('Y-m-d') }}</td>
+                    <td>{{ salary.getToDate()|date('Y-m-d') }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}
+{% endblock %}

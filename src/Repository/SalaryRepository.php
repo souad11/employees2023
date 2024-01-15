@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Salary;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\Employee;
 
 /**
  * @extends ServiceEntityRepository<Salary>
@@ -45,4 +46,14 @@ class SalaryRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+public function findAllEmployeesWithSalaries(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->leftJoin('e.salaries', 's')
+            ->addSelect('s')
+            ->orderBy('e.lastName', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
