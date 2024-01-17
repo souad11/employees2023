@@ -91,7 +91,7 @@ class DemandController extends AbstractController
 
                 // Vérification personnalisée pour le type "Reassignment"
                 $this->addFlash('danger', 'Si le type est "Reassignment", le champ "About" doit correspondre à un département existant.
-                 Exemple: Marketin, Finance,Human Resources, Production, Development, Quality Management,Sales,Research, Customer Service');
+                 Exemple: Marketing, Finance,Human Resources, Production, Development, Quality Management,Sales,Research, Customer Service');
 
                  //si le departement du demandeur est le meme que celui de la demande
             } elseif ($depUser == $demand->getAbout()) {
@@ -106,7 +106,7 @@ class DemandController extends AbstractController
                 ]);
 
                 if ($employee) {
-                    $demand->setEmploye($employee);
+                    $demand->setEmploye($employee); 
 
 
                 // Si le formulaire n'a pas d'erreur, persistez la demande
@@ -193,7 +193,7 @@ class DemandController extends AbstractController
         return $this->redirectToRoute('app_demand_index', [], Response::HTTP_SEE_OTHER);
     }
 
-
+    //route pour changer le status de la demande
     #[Route('/{id}/{status}', name:'app_demand_update_status', methods: ['POST'])]
     public function updateDemandStatus(DemandRepository $demandRepository, EntityManagerInterface $entityManager, $id, $status): Response
     {
@@ -203,17 +203,24 @@ class DemandController extends AbstractController
             throw $this->createNotFoundException('Demande introuvable');
         }
         
-        if($status == '1'){
-            $demand->setStatus(1);
-            
-        }elseif($status == '0'){
-            $demand->setStatus(0);
-        }
         $demand->setStatus($status == '1' ? 1 : 0);
+
+
+
+
+        $entityManager->persist($demand); 
         
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_demand_index', [], Response::HTTP_SEE_OTHER);
+        if ($status == '1') {
+            
+        return $this->redirectToRoute('app_salary_new', ['id' => $id]);
+
+        } else {
+
+        return $this->redirectToRoute('app_demand_index');
+
+        }
 
     }
 }

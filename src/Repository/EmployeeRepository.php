@@ -63,7 +63,7 @@ class EmployeeRepository extends ServiceEntityRepository
         }
 
         return $queryBuilder
-            ->setMaxResults(10)
+
             ->getQuery()
             ->getResult();
     }
@@ -77,5 +77,59 @@ class EmployeeRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+
+    //obtenir les salaires d'un employé
+    public function findEmployeeWithSalaries($id): array
+    {
+        return $this->createQueryBuilder('e')
+            ->leftJoin('e.salaries', 's')
+            ->addSelect('s')
+            ->where('e.id = :id')
+            ->setParameter('id', $id)
+            ->orderBy('s.fromDate', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    //obtenir le dernier salaire, c'est celui avec  la de fin de contrat à 9999-01-01
+    public function findLastSalary(int $employeeId)
+    {
+        return $this->createQueryBuilder('e')
+            ->select('s')
+            ->from('App\Entity\Salary', 's')
+            ->andWhere('s.employee = :employeeId')
+            ->andWhere('s.toDate = :toDate')
+            ->setParameter('employeeId', $employeeId)
+            ->setParameter('toDate', new \DateTime('9999-01-01'))
+            ->orderBy('s.fromDate', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }   
+    /**
+     * @param int $employeeId
+     * @return mixed
+     */
+
+    //obtenir les demandes de salaire d'un employé
+    public function findSalaryDemands(int $employeeId)
+    {
+        return $this->createQueryBuilder('e')
+            ->select('d')
+            ->from('App\Entity\Demand', 'd')
+            ->andWhere('d.employe = :employeeId')
+            ->andWhere('d.type = :demandType')
+            ->andWhere('d.status = :demandStatus') // Ajouter cette condition
+            ->setParameter('employeeId', $employeeId)
+            ->setParameter('demandType', 'salary') // Assurez-vous que le type est correct
+            ->setParameter('demandStatus', true) // Assurez-vous que le statut est 'true'
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
+    
     
 }

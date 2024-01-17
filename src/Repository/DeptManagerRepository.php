@@ -5,7 +5,6 @@ namespace App\Repository;
 use App\Entity\DeptManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use App\Entity\Department;
 
 /**
  * @extends ServiceEntityRepository<DeptManager>
@@ -46,14 +45,5 @@ class DeptManagerRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
-public function countEmployeesInDepartment(Department $department): int
-{
-    // Utilisez les méthodes du repository pour obtenir le nombre d'employés
-    $qb = $this->createQueryBuilder('dm')
-        ->select('COUNT(dm.employee)')
-        ->where('dm.department = :department')
-        ->setParameter('department', $department);
 
-    return $qb->getQuery()->getSingleScalarResult();
-}
 }

@@ -47,12 +47,12 @@ class SalaryRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-public function findAllEmployeesWithSalaries(): array
+public function findSalariesByEmployee(Employee $employee): array
     {
-        return $this->createQueryBuilder('e')
-            ->leftJoin('e.salaries', 's')
-            ->addSelect('s')
-            ->orderBy('e.lastName', 'ASC')
+        return $this->createQueryBuilder('s')
+            ->where('s.employee = :employee')
+            ->setParameter('employee', $employee)
+            ->orderBy('s.fromDate', 'ASC')
             ->getQuery()
             ->getResult();
     }

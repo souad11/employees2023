@@ -80,13 +80,24 @@
                         <td>{{ demand.about }}</td>
                         
                         <td class="d-flex">
+                            {% if demand.status is not null %}
+                                <a href="{{ path('app_demand_show', {'id': demand.id}) }}" class="btn btn-primary">Show</a>
+                            {% else %}
+                                
                             <a href="{{ path('app_demand_edit', {'id': demand.id}) }}" class="btn btn-primary">Edit</a>
                             {{ include('demand/_delete_form.html.twig') }}
+                            {% endif %}
                         </td>                        
                     <tr>
                 </tbody>
             {% endfor %}
             </table>
+
+            //lien pour voir mes missions
+
+            <a href="{{ path('app_mission_mes_missions', {'id': employee.id}) }}">Mes missions</a>
+
+
 
 
     <a href="{{ path('app_employee_index') }}">Back to list</a>

@@ -12,8 +12,6 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 
-
-
 enum Gender: string {
     case Homme='M';
     case Femme='F';
@@ -76,11 +74,12 @@ class Employee implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'employee', cascade: ['persist', 'remove'])]
     private ?DeptManager $deptManager = null;
 
-    #[ORM\OneToMany(mappedBy: 'employee', targetEntity: DeptEmp::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'employee', targetEntity: DeptEmp::class, cascade: ['persist', 'remove'])] 
     private Collection $deptEmps;
 
     #[ORM\OneToMany(mappedBy: 'employee', targetEntity: Salary::class)]
     private Collection $salaries;
+
 
     public function __construct()
     {
