@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mission{% endblock %}
+
+{% block body %}
+    <h1>Mission</h1>
+
+    <table class="table" >
+           <tr>
+            <th>Description</th>
+            <th>Due Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+         
+            </tr>
+            {% for mission in missions %}
+            <tr>
+            <td>{{mission.description}}</td>
+            <td>{{mission.dueDate|date('Y-m-d')}}</td>
+            <td>{{mission.status}}</td>
+            <td>
+                <form class="form-inline" action="{{ path('app_mission_my_missions_update_status', {'id': mission.id, 'status': 'done'}) }}" method="post">
+                  <button type="submit" class="btn btn-success">Terminer</button>
+                </form>
+            </td>
+            </tr>
+
+            {% endfor %}
+
+            {% for notTakenMission in notTakenMissions %}
+            <tr>
+            <td>{{notTakenMission.description}}</td>
+            <td>{{notTakenMission.dueDate|date('Y-m-d')}}</td>
+            <td>{{notTakenMission.status}}</td>
+            <td>
+                <form class="form-inline" action="{{ path('app_mission_my_missions_update_status', {'id': notTakenMission.id, 'status': 'ongoing'}) }}" method="post">
+                    <button type="submit" class="btn btn-primary">Accepter</button>
+                </form>
+            </td>
+            </tr>
+
+            {% endfor %}
+    </table>
+
+      {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('danger') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <a href="{{ path('app_mission_index') }}">back to list</a>
+
+{% endblock %}

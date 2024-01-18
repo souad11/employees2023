@@ -41,6 +41,9 @@
                     <li class="nav-item">
                     <a class="nav-link" href="{{path('app_department_index')}}">Departments</a>
                     </li>
+                    <li class="nav-item">
+                    <a class="nav-link" href="{{path('app_mission_my_missions', {'id': app.user.id})}}">My Missions</a>
+                    </li>
                 {% endif %}
 
                 {% if is_granted('ROLE_ADMIN') %}
