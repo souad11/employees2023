@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Projet index{% endblock %}
+
+{% block body %}
+    <h1>Liste des projets</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Actions</th>
+                
+
+            </tr>
+        </thead>
+        <tbody>
+        
+
+        {% for projet in projets %}
+        
+            <tr>
+                <td><h3>{{ projet.description }} - {{ projet.employee }}</h3></td>
+                {% for empProjet in empProjets %}
+                    {% if empProjet.projet.id == projet.id %}
+                        <tr>    
+                            <td>{{ empProjet.employee.firstName}} {{ empProjet.employee.lastName}}</td> <td><form class="form-inline" action="{{ path('app_projet_delete_emp', {'id': empProjet.id}) }}" method="post">
+                                <button class="btn btn-danger" type="submit" onclick="confirm"><i class="fas fa-times"></i></button></td>
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ empProjet.id) }}">
+                            </form>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_projet_new') }}">Create new</a>
+{% endblock %}

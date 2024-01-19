@@ -83,6 +83,13 @@ class Employee implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Mission::class, mappedBy: 'employee')]
     private Collection $missions;
 
+    #[ORM\OneToMany(mappedBy: 'employee', targetEntity: EmpProjet::class)]
+    private Collection $empProjets;
+
+    #[ORM\ManyToOne(inversedBy: 'employees')]
+    #[ORM\OneToMany(mappedBy: 'employee', targetEntity: Projet::class)]
+    private Collection $projets;
+
 
     public function __construct()
     {
@@ -92,6 +99,8 @@ class Employee implements UserInterface, PasswordAuthenticatedUserInterface
         $this->salaries = new ArrayCollection();
         $this->roles[] = 'ROLE_USER';
         $this->missions = new ArrayCollection();
+        $this->empProjets = new ArrayCollection();
+        $this->projets = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -415,6 +424,66 @@ class Employee implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->missions->removeElement($mission)) {
             $mission->removeEmployee($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EmpProjet>
+     */
+    public function getEmpProjets(): Collection
+    {
+        return $this->empProjets;
+    }
+
+    public function addEmpProjet(EmpProjet $empProjet): static
+    {
+        if (!$this->empProjets->contains($empProjet)) {
+            $this->empProjets->add($empProjet);
+            $empProjet->setEmployee($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmpProjet(EmpProjet $empProjet): static
+    {
+        if ($this->empProjets->removeElement($empProjet)) {
+            // set the owning side to null (unless already changed)
+            if ($empProjet->getEmployee() === $this) {
+                $empProjet->setEmployee(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Projet>
+     */
+    public function getProjets(): Collection
+    {
+        return $this->projets;
+    }
+
+    public function addProjet(Projet $projet): static
+    {
+        if (!$this->projets->contains($projet)) {
+            $this->projets->add($projet);
+            $projet->setEmployee($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProjet(Projet $projet): static
+    {
+        if ($this->projets->removeElement($projet)) {
+            // set the owning side to null (unless already changed)
+            if ($projet->getEmployee() === $this) {
+                $projet->setEmployee(null);
+            }
         }
 
         return $this;

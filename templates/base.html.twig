@@ -44,6 +44,8 @@
                     <li class="nav-item">
                     <a class="nav-link" href="{{path('app_mission_my_missions', {'id': app.user.id})}}">My Missions</a>
                     </li>
+                    <li class="nav-item">
+                    <a class="nav-link" href="{{path('app_projet_index')}}">Afficher les Projets</a>
                 {% endif %}
 
                 {% if is_granted('ROLE_ADMIN') %}
