@@ -90,6 +90,9 @@ class Employee implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'employee', targetEntity: Projet::class)]
     private Collection $projets;
 
+    #[ORM\OneToMany(mappedBy: 'employee', targetEntity: Leave::class)]
+    private Collection $leaves;
+
 
     public function __construct()
     {
@@ -101,6 +104,7 @@ class Employee implements UserInterface, PasswordAuthenticatedUserInterface
         $this->missions = new ArrayCollection();
         $this->empProjets = new ArrayCollection();
         $this->projets = new ArrayCollection();
+        $this->leaves = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -483,6 +487,36 @@ class Employee implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($projet->getEmployee() === $this) {
                 $projet->setEmployee(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Leave>
+     */
+    public function getLeaves(): Collection
+    {
+        return $this->leaves;
+    }
+
+    public function addLeaf(Leave $leaf): static
+    {
+        if (!$this->leaves->contains($leaf)) {
+            $this->leaves->add($leaf);
+            $leaf->setEmployee($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLeaf(Leave $leaf): static
+    {
+        if ($this->leaves->removeElement($leaf)) {
+            // set the owning side to null (unless already changed)
+            if ($leaf->getEmployee() === $this) {
+                $leaf->setEmployee(null);
             }
         }
 

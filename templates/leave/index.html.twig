@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Leave index{% endblock %}
+
+{% block body %}
+    <h1>Absences aujourd'hui</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Type</th>
+                <th>FromDate</th>
+                <th>ToDate</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for leave in todayLeaves %}
+            <tr>
+                <td>{{ leave.employee.firstName }} {{ leave.employee.lastName }}</td>
+                <td>{{ leave.type }}</td>
+                <td>{{ leave.fromDate ? leave.fromDate|date('Y-m-d') : '' }}</td>
+                <td>{{ leave.toDate ? leave.toDate|date('Y-m-d') : '' }}</td>
+
+                <td>
+
+                <form action="{{ path('app_leave_return_from_leaves', {'id': leave.id}) }}" method="post">
+                        <button class="btn btn-danger" type="submit"><i class="fas fa-times"></i></button>
+                </form>
+                
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_leave_new') }}">Create new</a>
+{% endblock %}
